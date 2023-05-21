@@ -6,10 +6,9 @@ This repo is meant to get a feel for how challenging it is to generate a useful 
 ## Design
 Ideally this would directly map from a requirements document to a functional codebase. Initial testing showed that was only going to work for very small projects (say, a single file or two containing a couple functions). Inspired by chain-of-thought prompting and how typical software development works, I tried introducing a middle step of a design document.
 
-## Dependencies
+## Usage
 I've only tested this on Ubuntu 20.04 with Python 3.10.4.
 
-## Usage
 High-level workflow:
 - Human writes a requirements document and places it in `generated_projects/<project_name>`.
 - GPT-4 writes a design document based on the requirements document and places it in `generated_projects/<project_name>`: `python src/generate_design_document_from_requirements.py`
