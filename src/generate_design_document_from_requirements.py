@@ -4,8 +4,8 @@
 import logging
 
 from prompt_templates.design_doc_generation import design_document_template
-from llm_utils import send_templated_message_to_llm
-from file_io_utils import load_project_requirements, write_file
+from utils.llm import send_templated_message_to_llm
+from utils.file_io import load_project_requirements, write_file
 
 
 logging.basicConfig(level=logging.DEBUG,

@@ -1,4 +1,4 @@
-# Discord Bot Project Design Document
+# Discord Bot Design Document
 
 ## Table of Contents
 - [Last Updated](#last-updated)
@@ -26,47 +26,50 @@ The purpose of this discord bot is to allow users to send messages and have thos
 5. Run the bot with `python run_bot.py`
 
 ## Deployment Instructions
-The bot will be deployed to Google Compute Engine using GitHub Actions. The deployment process will be triggered every time a commit is merged into the repository.
+The bot will be automatically deployed to Google Compute Engine using GitHub Actions when a commit is merged into the repository.
 
 ## Dependency Diagram
-```graphviz
+```
 digraph G {
-    run_bot -> bot;
-    bot -> discord;
-    bot -> logging;
+    run_bot -> discord_bot;
+    discord_bot -> discord;
 }
 ```
 
 ## File Structure
 ```
-discord_character_counter_bot/
+discord_character_counter/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yaml
-├── .venv/
 ├── src/
-│   ├── bot.py
+│   ├── discord_bot.py
 │   └── run_bot.py
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── project_design_document.md
 ```
 
 ## File Descriptions
 
-### src/bot.py
-Contains the main bot logic for handling messages and managing subscribers.
+### src/discord_bot.py
+The main discord bot module that handles user subscriptions, message processing, and character counting.
 - Third-party packages: discord.py
-- `class CharacterCounterBot`: The main bot class that extends discord.Client.
-  - `async def on_ready(self)`: Logs when the bot is ready and connected to Discord.
-  - `async def on_message(self, message)`: Handles incoming messages and processes them based on the content.
-- `def count_characters(text: str) -> Dict[str, int]`: Counts the characters in the given text and returns a dictionary with character counts.
+- `class DiscordCharacterCounterBot(discord.Client)`
+  - `async def on_ready(self)`
+    - Logs when the bot is ready and connected to Discord.
+  - `async def on_message(self, message)`
+    - Processes user messages, handles subscriptions, unsubscriptions, and character counting.
+- `def count_characters(text: str) -> Dict[str, int]`
+  - Counts the characters in the given text and returns a dictionary mapping characters to their counts.
 
 ### src/run_bot.py
-The entry point for running the bot.
+The entry point for running the discord bot.
 - Third-party packages: discord.py
-- `def main()`: Initializes and runs the bot.
+- `def main()`
+  - Initializes and runs the DiscordCharacterCounterBot.
 
 ### .github/workflows/deploy.yaml
 GitHub Actions workflow file for deploying the bot to Google Compute Engine.
@@ -78,7 +81,7 @@ Specifies files and directories to be ignored by git.
 Contains the license for the project.
 
 ### README.md
-Provides an overview of the project and instructions for setup and usage.
+Provides an overview of the project, usage instructions, and other relevant information.
 
 ### requirements.txt
 Lists the required Python packages for the project.

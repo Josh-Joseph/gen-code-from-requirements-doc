@@ -1,6 +1,3 @@
-import yaml
-
-
 def load_project_requirements(project_path: str) -> str:
     """Load the project requirements from the project_requirements_document.md file."""
     with open(f"{project_path}/project_requirements_document.md", "r") as file:

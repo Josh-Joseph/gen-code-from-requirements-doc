@@ -3,16 +3,15 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.pyc
-*.egg-info/
-dist/
-build/
-*.egg
+.Python
 .venv/
+venv/
+env/
+*.log
 
 # IDEs
-.idea/
 .vscode/
+.idea/
 
 # OS
 .DS_Store

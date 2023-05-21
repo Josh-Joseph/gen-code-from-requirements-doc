@@ -5,8 +5,8 @@ import logging
 from pathlib import Path
 
 from prompt_templates.code_generation import code_template
-from llm_utils import send_templated_message_to_llm
-from file_io_utils import load_design_document, write_file
+from utils.llm import send_templated_message_to_llm
+from utils.file_io import load_design_document, write_file
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -25,7 +25,7 @@ def get_file_paths(directory):
 if __name__ == "__main__":
     project_path = "generated_projects/discord_bot"
     design_document = load_design_document(project_path)
-    file_paths = get_file_paths(f"{project_path}/discord_character_counter_bot")
+    file_paths = get_file_paths(f"{project_path}/discord_character_counter")
     for fp in file_paths:
         message_to_send = code_template(design_document, fp)
         path_and_filename, content = send_templated_message_to_llm(message_to_send)

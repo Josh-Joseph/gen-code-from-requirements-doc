@@ -35,7 +35,7 @@ jobs:
         gcloud auth activate-service-account --key-file=service_account_key.json
         gcloud config set project $GCE_PROJECT_ID
         gcloud config set compute/zone $GCE_ZONE
-        gcloud compute ssh $GCE_INSTANCE_NAME --command="sudo systemctl stop discord_character_counter_bot"
-        gcloud compute scp --recurse . $GCE_INSTANCE_NAME:~/discord_character_counter_bot
-        gcloud compute ssh $GCE_INSTANCE_NAME --command="source ~/discord_character_counter_bot/.venv/bin/activate && sudo systemctl start discord_character_counter_bot"
+        gcloud compute ssh $GCE_INSTANCE_NAME --command="sudo systemctl stop discord_character_counter"
+        gcloud compute scp --recurse . $GCE_INSTANCE_NAME:~/discord_character_counter
+        gcloud compute ssh $GCE_INSTANCE_NAME --command="source ~/discord_character_counter/.venv/bin/activate && sudo systemctl start discord_character_counter"
         rm service_account_key.json

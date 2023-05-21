@@ -12,17 +12,17 @@ I've only tested this on Ubuntu 20.04 with Python 3.10.4.
 ## Usage
 High-level workflow:
 - Human writes a requirements document and places it in `generated_projects/<project_name>`.
-- GPT-4 writes a design document based on the requirements document and places it in `generated_projects/<project_name>`: `python generate_design_document_from_requirements.py`
-- GPT-4 writes a script to populate the file structure and places it in `generated_projects/<project_name>`: `python generate_file_structure_from_design_document.py`
-- Human runs the file structure creation script (this is easy to automate just .. makes me nervous at the moment): `python generated_projects/<project_name>/generate_file_structure.py`
-- Use GPT-4 to populate the content of the files: `python generated_projects/<project_name>/generate_code_from_file_structure.py`
+- GPT-4 writes a design document based on the requirements document and places it in `generated_projects/<project_name>`: `python src/generate_design_document_from_requirements.py`
+- GPT-4 writes a script to populate the file structure and places it in `generated_projects/<project_name>`: `python src/generate_file_structure_from_design_document.py`
+- Human runs the file structure creation script (this is easy to automate just .. makes me nervous at the moment): `python /src/generated_projects/<project_name>/generate_file_structure.py`
+- Use GPT-4 to populate the content of the files: `python src/generated_projects/<project_name>/generate_code_from_file_structure.py`
 
 ## Experiments
 
 ### Discord Character Counter
-So far, I've only tested this to create a silly discord bot that counts characters of messages sent by "subscribers" to it and is deployed to GCE (see `generated_projects/discord_bot/project_requirements_document.md` for the full requirements). I haven't even tried to run the code yet to see if it actually runs. I imagine it won't since `discord.py` has had some significant changes since GPT-4's knowledge cut-off. I'm going to wait to go farther down actually running the code until I get web-browsing hooked up.
+So far, I've only tested this to create a silly discord bot that counts characters of messages sent by "subscribers" to it and is deployed to GCE (see `src/generated_projects/discord_bot/project_requirements_document.md` for the full requirements). I haven't even tried to run the code yet to see if it actually runs. I imagine it won't since `discord.py` has had some significant changes since GPT-4's knowledge cut-off. I'm going to wait to go farther down actually running the code until I get web-browsing hooked up.
 
-Inside `generated_projects/discord_bot/`, `project_requirements_document.md` is the only thing I manually created.
+Inside `src/generated_projects/discord_bot/`, `project_requirements_document.md` is the only thing I manually created.
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs rethinking. For example, I've hardcoded in the directory in `generate_code_from_file_structure.py`.
