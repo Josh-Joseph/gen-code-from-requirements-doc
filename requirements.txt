@@ -1,0 +1,10 @@
+discord
+openai
+python-dotenv
+tiktoken
+beautifulsoup4
+google-api-python-client
+wolframalpha
+lxml
+playwright
+langchain
