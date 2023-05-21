@@ -18,7 +18,7 @@ def query_llm(message: str) -> str:
     """Send the system message and design message to OpenAI and return the reply."""
     openai.api_key = os.getenv("OPENAI_KEY")
 
-    openai_model = "gpt-4"
+    openai_model = "gpt-4-0314"
     openai_model_max_tokens = 2048
 
     log.debug(f"llm query:\n{message}")
@@ -34,6 +34,9 @@ def query_llm(message: str) -> str:
     response = openai.ChatCompletion.create(**params)
     reply = response.choices[0]["message"]["content"]
     log.debug(f"llm reply:\n{reply}")
+    log.info(f"Response time: {response.response_ms / 1000. / 60.:.2f} minutes")
+    log.info(f"Tokens (Prompt, Completion, Total): "
+             f"({response.usage['prompt_tokens']}, {response.usage['completion_tokens']}, {response.usage['total_tokens']})")
     return reply
 
 

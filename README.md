@@ -1,7 +1,7 @@
 # gen-code-from-requirements-doc
 
 ## Purpose of this repo
-This repo is meant to get a feel for how challenging it is to generate a useful codebase using GPT-4. I'm less concerned here with actually generating functional code and more focused on figuring out to what degree this is possible.
+This repo is meant to help me get a feel for how challenging it is to generate a useful codebase using GPT-4. I'm less concerned here with actually generating functional code and more focused on figuring out to what degree this is possible.
 
 ## Design
 Ideally this would directly map from a requirements document to a functional codebase. Initial testing showed that was only going to work for very small projects (say, a single file or two containing a couple functions). Inspired by chain-of-thought prompting and how typical software development works, I tried introducing a middle step of a design document. Really the purpose of the design document is to:
@@ -34,10 +34,14 @@ High-level workflow:
 
 ## Experiments
 
-### Discord Character Counter
-So far, I've only tested this to create a silly discord bot that counts characters of messages sent by "subscribers" to it and is deployed to GCE (see `src/generated_projects/discord_bot/project_requirements_document.md` for the full requirements). I haven't even tried to run the code yet to see if it actually runs. I imagine it won't since `discord.py` has had some significant changes since GPT-4's knowledge cut-off. I'm going to wait to go farther down actually running the code until I get web-browsing hooked up.
+### Local Discord Character Counter Bot
+So far, I've only tested this to create a silly discord bot that counts characters of messages sent by "subscribers" to it (see `src/generated_projects/local_discord_bot/project_requirements_document.md` for the full requirements). 
 
-Inside `src/generated_projects/discord_bot/`, `project_requirements_document.md` is the only thing I manually created.
+
+
+I haven't even tried to run the code yet to see if it actually runs. I imagine it won't since `discord.py` has had some significant changes since GPT-4's knowledge cut-off. I'm going to wait to go farther down actually running the code until I get web-browsing hooked up.
+
+Inside `src/generated_projects/local_discord_bot/`, `project_requirements_document.md` is the only thing I manually created.
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs some love.
@@ -49,6 +53,8 @@ Inside `src/generated_projects/discord_bot/`, `project_requirements_document.md`
 - Specifying what I want in a requirements file and then using a design document as an intermediate step was great. It seems like for the forseeable future a middle step (or two!) between "me writing what I want" and "generate code" that GPT-4 generates seems extremely helpful (both for human-interpretable debugging and producing higher quality code).
 - Generating in a one-forward-pass mode is far too hard. It needs to be an iterative (with a human in the loop) process. And "iterating" by editing prompts and re-running makes it too hard to capture the changes.
 - Context size is going to make this impossible for anything but tiny projects (ideally, we'd have the requirements and design doc in context while writing code but that'll easily fill half the context of GPT-4 by itself).
+- Remember the LLM is trained on all the data from the internet: beginner, intermediate, advanced, trash, power users, puzzles, etc. So if you want it be an expert, tell it to be an expert! 
+- I like the mindset of viewing the LLM like it's a really book-smart intern. It has some unintuitive (to me) priors that skews interpretations of vague instructions. When you feel the odd prior happening, just be more specific. At some point "more specific" means "examples".
 - Who it assigned the copyright to in the LICENSE file is pretty fantastic.
 
 ## Ideas for the next iteration

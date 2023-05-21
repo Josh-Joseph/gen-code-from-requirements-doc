@@ -1,4 +1,4 @@
-# Disocrd Bot
+# Discord Bot Deployed to Google Compute Engine
 
 ## Overview
 
@@ -13,7 +13,7 @@ The purpose of this discord bot is to allow users to send messages and have thos
 - All messages sent should be sent as replies to the user's original message.
 - The bot must be started with the command `python run_bot.py`
 - The command `python run_bot.py` must be run from inside of python virtual environment placed at `<project_root>/.venv` that has all of the necessary requirements installed
-- Everytime a commit is merged into the repository, GitHub actions must deploy the bot to Google Compute Engine.
+- Each time a commit is merged into the repository, GitHub actions must deploy the bot to Google Compute Engine.
 
 ## Non-functional Requirements
 

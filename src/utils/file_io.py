@@ -19,4 +19,4 @@ def write_file(path_and_filename: str, content: str) -> None:
     """Write the content to the file."""
     with open(path_and_filename, "w") as file:
         file.write(content)
-    log.debug(f"Wrote out file: {path_and_filename}")
+    log.info(f"Wrote out file: {path_and_filename}")

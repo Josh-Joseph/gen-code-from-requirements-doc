@@ -5,7 +5,7 @@ def code_template(design, file_path):
 Your Instructions:
 - Generate the content for {file_path} only. Look at the file extension to know what type of content to generate.
 - Only respond with the filename (including the full path you were given) and contents for the single Python file.
-- Do not write any re-amble or post-amble text around the single Python file.
+- Do not write any re-amble or post-amble text around the single file.
 - If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable."""
 
 
@@ -25,3 +25,14 @@ The Python script must:
 Do not write any code that will go in the files described in the design document.
 Do not write any re-amble or post-amble text around the single Python file.
 Respond with full, valid, correct, and runnable Python code."""
+
+
+def bash_script_template(design):
+    return f"""Given on the following design:
+{design}
+
+Your instructions:
+- Generate the a bash script to set up the virtual environment, install the dependencies, and run the code. Assume the bash script will be run from the project's root directory.
+- Ensure the bash script is correct and only uses valid bash syntax.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable."""
