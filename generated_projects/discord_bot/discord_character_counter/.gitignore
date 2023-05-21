@@ -3,16 +3,17 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
 .venv/
-venv/
-env/
-*.log
 
 # IDEs
 .vscode/
 .idea/
-
-# OS
-.DS_Store
-Thumbs.db

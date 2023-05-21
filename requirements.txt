@@ -8,3 +8,4 @@ wolframalpha
 lxml
 playwright
 langchain
+fire

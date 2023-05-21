@@ -26,13 +26,13 @@ The purpose of this discord bot is to allow users to send messages and have thos
 5. Run the bot with `python run_bot.py`
 
 ## Deployment Instructions
-The bot will be automatically deployed to Google Compute Engine using GitHub Actions when a commit is merged into the repository.
+The bot will be deployed to Google Compute Engine using GitHub Actions. Every time a commit is merged into the repository, GitHub Actions will deploy the bot.
 
 ## Dependency Diagram
-```
+```graphviz
 digraph G {
     run_bot -> discord_bot;
-    discord_bot -> discord;
+    discord_bot -> message_handler;
 }
 ```
 
@@ -42,46 +42,48 @@ discord_character_counter/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yaml
+├── .venv/
 ├── src/
 │   ├── discord_bot.py
+│   ├── message_handler.py
 │   └── run_bot.py
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-├── requirements.txt
-└── project_design_document.md
+└── requirements.txt
 ```
 
 ## File Descriptions
 
 ### src/discord_bot.py
-The main discord bot module that handles user subscriptions, message processing, and character counting.
+Handles the main functionality of the Discord bot, including subscribing and unsubscribing users, and listening for messages from subscribers.
 - Third-party packages: discord.py
-- `class DiscordCharacterCounterBot(discord.Client)`
-  - `async def on_ready(self)`
-    - Logs when the bot is ready and connected to Discord.
-  - `async def on_message(self, message)`
-    - Processes user messages, handles subscriptions, unsubscriptions, and character counting.
-- `def count_characters(text: str) -> Dict[str, int]`
-  - Counts the characters in the given text and returns a dictionary mapping characters to their counts.
+- `class DiscordBot`: Main class for the Discord bot
+  - `async def on_ready(self)`: Logs when the bot is ready
+  - `async def on_message(self, message)`: Handles incoming messages and replies with character count if the sender is a subscriber
+  - `async def subscribe_user(self, user)`: Subscribes a user and sends a confirmation message
+  - `async def unsubscribe_user(self, user)`: Unsubscribes a user and sends a confirmation message
+
+### src/message_handler.py
+Contains the logic for counting characters in a message.
+- `def count_characters(message: str) -> Dict[str, int]`: Counts the characters in a message and returns a dictionary mapping characters to their counts
 
 ### src/run_bot.py
-The entry point for running the discord bot.
+Entry point for running the Discord bot.
 - Third-party packages: discord.py
-- `def main()`
-  - Initializes and runs the DiscordCharacterCounterBot.
+- `def main()`: Initializes and runs the Discord bot
 
 ### .github/workflows/deploy.yaml
-GitHub Actions workflow file for deploying the bot to Google Compute Engine.
+GitHub Actions workflow for deploying the bot to Google Compute Engine.
 
 ### .gitignore
-Specifies files and directories to be ignored by git.
+Specifies files and directories to be ignored by Git.
 
 ### LICENSE
 Contains the license for the project.
 
 ### README.md
-Provides an overview of the project, usage instructions, and other relevant information.
+Provides an overview of the project and instructions for setup and usage.
 
 ### requirements.txt
 Lists the required Python packages for the project.

@@ -1,10 +1,10 @@
 import os
 import yaml
-import logging
 
 import openai
 
 from prompt_templates.system_message import system_message_template
+from utils.log import log
 
 
 promt_to_respond_with_yaml = """
@@ -21,7 +21,7 @@ def query_llm(message: str) -> str:
     openai_model = "gpt-4"
     openai_model_max_tokens = 2048
 
-    logging.debug(f"llm query:\n{message}")
+    log.debug(f"llm query:\n{message}")
     messages = []
     messages.append({"role": "user", "content": message})
 
@@ -33,7 +33,7 @@ def query_llm(message: str) -> str:
     }
     response = openai.ChatCompletion.create(**params)
     reply = response.choices[0]["message"]["content"]
-    logging.debug(f"llm reply:\n{reply}")
+    log.debug(f"llm reply:\n{reply}")
     return reply
 
 

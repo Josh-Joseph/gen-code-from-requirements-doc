@@ -1,28 +1,31 @@
 import discord
-from typing import Dict
+from discord.ext import commands
+from message_handler import count_characters
 
 
-class DiscordCharacterCounterBot(discord.Client):
+class DiscordBot(commands.Bot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     async def on_ready(self):
-        print(f"We have logged in as {self.user}")
+        print(f'{self.user} is ready.')
 
     async def on_message(self, message):
         if message.author == self.user:
             return
 
-        if message.content.startswith("!count"):
-            character_counts = count_characters(message.content[6:])
-            response = "Character counts:\n"
-            for char, count in character_counts.items():
-                response += f"{char}: {count}\n"
-            await message.channel.send(response)
-
-
-def count_characters(text: str) -> Dict[str, int]:
-    character_counts = {}
-    for char in text:
-        if char in character_counts:
-            character_counts[char] += 1
+        if message.content.startswith('!subscribe'):
+            await self.subscribe_user(message.author)
+        elif message.content.startswith('!unsubscribe'):
+            await self.unsubscribe_user(message.author)
         else:
-            character_counts[char] = 1
-    return character_counts
+            character_count = count_characters(message.content)
+            await message.channel.send(f'Character count: {character_count}')
+
+    async def subscribe_user(self, user):
+        # Add user to subscribers list (not implemented)
+        await user.send('You have been subscribed to the character counter bot.')
+
+    async def unsubscribe_user(self, user):
+        # Remove user from subscribers list (not implemented)
+        await user.send('You have been unsubscribed from the character counter bot.')
