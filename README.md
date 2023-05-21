@@ -1,7 +1,7 @@
 # gen-code-from-requirements-doc
 
 ## Purpose of this repo
-This repo is meant to get a feel for how challenging it is to generate a useful codebase using GPT-4. I'm less concerned here with actually generating functional code and figuring out to what degree this is possible.
+This repo is meant to get a feel for how challenging it is to generate a useful codebase using GPT-4. I'm less concerned here with actually generating functional code and more focused on figuring out to what degree this is possible.
 
 ## Design
 Ideally this would directly map from a requirements document to a functional codebase. Initial testing showed that was only going to work for very small projects (say, a single file or two containing a couple functions). Inspired by chain-of-thought prompting and how typical software development works, I tried introducing a middle step of a design document. Really the purpose of the design document is to:
