@@ -51,11 +51,11 @@ Inside `src/generated_projects/discord_bot/`, `project_requirements_document.md`
 - Context size is going to make this impossible for anything but tiny projects (ideally, we'd have the requirements and design doc in context while writing code but that'll easily fill half the context of GPT-4 by itself).
 - Who it assigned the copyright to in the LICENSE file is pretty fantastic.
 
-# Ideas for the next iteration
+## Ideas for the next iteration
 - Rather than this one-forward-pass, I think development may need to look a lot more like a standard software dev process (think: GitHub issues, branch the code, put in a PR, reviews, merge the PR). I think this style of iterating will be much easier for me to give GPT-4 the specificity of feedback needed to build a codebase containing, say, a dozen files. This may also help limit what needs to be in GPT-4's context and allow me to build bigger codebases without having to put full requirements and/or design documents in the context.
 - Ideally in this new mode, I'd only have to write issues and review PRs. It's mostly the same mindset of interacting with a junior engineer.
 
-# Related projects
+## Related projects
 These projects were extremely inspiring and I borrowed many ideas from them:
 - [smol developer](https://github.com/smol-ai/developer)
 - [Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT)
