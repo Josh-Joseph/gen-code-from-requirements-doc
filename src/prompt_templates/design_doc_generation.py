@@ -18,6 +18,7 @@ Write a design document based on these requirements. The design document must:
         - Include any additional files that are necessary for the project to be built and run. Optional examples of these are: a setup.py file, a Dockerfile, a Makefile, a .gitignore file, github actions workflow `.yaml` files, etc.
         - Include a `readme.md` file, a `requirements.txt` file, and a LICENSE file.
         - Order the modules, directories, and files as they would be by `tree` on a linux file system.
+    - Logging. This section must include what logging will be used throughout the codebase.
     - For each file (not folder) in the file structure with the sections ordered by Python files first, then the other files:
         - Do not create a section if it is only a folder (for example do not create a `.venv` section).
         - Create a section for each file. Only create sections for files. Do not create sections for directories.

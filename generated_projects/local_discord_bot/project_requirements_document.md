@@ -11,7 +11,7 @@ The purpose of this discord bot is to allow users to send messages and have thos
 - The bot listens for messages from its subscribers and responds with dictionary containing a mapping of each character in the message to a count of the number of times that character appeared in the message
 - A subscriber can be removed from the subscriber list with the message "bot unsubscribe me!". the bot will confirm subscription by sending the message "You have been unsubscribed {user}!"
 - All messages sent should be sent as replies to the user's original message.
-- The bot will be run locally from a bash script called `set_up_and_run_bot.sh` that will do the following:
+- The bot must be run by a bash script `<project_root>/set_up_and_run_bot.sh` that will do the following:
   - Create a python virtual environment at `<project_root>/.venv`
   - Install all of the necessary requirements into the virtual environment
   - Start the bot from inside of the virtual environment

@@ -31,11 +31,17 @@ High-level workflow:
     ```
     python src/generate_code_from_file_structure.py --project_path generated_projects/<project_name>
     ````
+- Use GPT-4 fix errors that occur when the project is run: 
+    ```
+    python src/fix_code.py --project_path generated_projects/<project_name> --bash_script <set_up_and_run_bash_script>
+    ````
 
 ## Experiments
 
 ### Local Discord Character Counter Bot
-So far, I've only tested this to create a silly discord bot that counts characters of messages sent by "subscribers" to it (see `src/generated_projects/local_discord_bot/project_requirements_document.md` for the full requirements). 
+So far, I've only tested this on creating a silly discord bot that counts characters of messages sent by "subscribers" to it (see `src/generated_projects/local_discord_bot/project_requirements_document.md` for the full requirements). 
+
+I was hoping I wouldn't have to do the "fix errors" step but the code didn't run (for fairly minor reasons that GPT-4 was plenty able to debug and fix). Cool that worked though.
 
 
 
@@ -51,9 +57,10 @@ Inside `src/generated_projects/local_discord_bot/`, `project_requirements_docume
 ## Takeaways
 - Generally this seems super promising. Check out the generated design documents! Not bad. Definitely did better than I thought but we are _not_ there yet, at least going about it this way.
 - Specifying what I want in a requirements file and then using a design document as an intermediate step was great. It seems like for the forseeable future a middle step (or two!) between "me writing what I want" and "generate code" that GPT-4 generates seems extremely helpful (both for human-interpretable debugging and producing higher quality code).
-- Generating in a one-forward-pass mode is far too hard. It needs to be an iterative (with a human in the loop) process. And "iterating" by editing prompts and re-running makes it too hard to capture the changes.
+- There's definitely some being mindful about what the LLM needs to generate functional code and explicitly stating that should appear in the design document (e.g., environment variables, logging).
+- Generating in a one-forward-pass mode is far too hard. Getting the requirements doc + prompts right definitely took a couple dozen iterations. I think this needs to be an iterative (with a human in the loop) process. And "iterating" by editing prompts and re-running makes it too hard to capture the changes.
 - Context size is going to make this impossible for anything but tiny projects (ideally, we'd have the requirements and design doc in context while writing code but that'll easily fill half the context of GPT-4 by itself).
-- Remember the LLM is trained on all the data from the internet: beginner, intermediate, advanced, trash, power users, puzzles, etc. So if you want it be an expert, tell it to be an expert! 
+- Remember the LLM is trained on all the data from the internet: beginner, intermediate, advanced, trash, power users, puzzles, etc. So if you want it be an expert, tell it to be an expert! The same thing goes for package versions, it can sometimes use out-dated packages (even though it knows about newer versions) so tell it to use update-to-date packages.
 - I like the mindset of viewing the LLM like it's a really book-smart intern. It has some unintuitive (to me) priors that skews interpretations of vague instructions. When you feel the odd prior happening, just be more specific. At some point "more specific" means "examples".
 - Who it assigned the copyright to in the LICENSE file is pretty fantastic.
 
@@ -64,5 +71,6 @@ Inside `src/generated_projects/local_discord_bot/`, `project_requirements_docume
 ## Related projects
 These projects were extremely inspiring and I borrowed many ideas from them:
 - [smol developer](https://github.com/smol-ai/developer)
+- [Wolverine](https://github.com/biobootloader/wolverine)
 - [Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT)
 - [BabyAGI](https://github.com/yoheinakajima/babyagi)

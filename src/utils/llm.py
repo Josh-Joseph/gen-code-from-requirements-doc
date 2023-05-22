@@ -1,3 +1,6 @@
+"""Functions for interacting with the OpenAI Language Model (LLM)."""
+
+
 import os
 import yaml
 
