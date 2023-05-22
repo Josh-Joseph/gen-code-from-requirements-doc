@@ -1,22 +1,12 @@
 """Generate the file structure from the design document."""
 
 
-from pathlib import Path
-
 import fire
 
 from prompt_templates.code_generation import code_template
 from utils.llm import send_templated_message_to_llm
 from utils.file_io import (load_project_requirements, load_design_document, 
-                           get_project_root_folder_name, write_file)
-
-
-def get_file_paths(directory):
-    file_paths = []
-    for filepath in Path(directory).rglob('*'):
-        if filepath.is_file():
-            file_paths.append(str(filepath))
-    return file_paths
+                           get_project_root_folder_name, write_file, get_file_paths)
 
 
 def generate_code(project_path: str) -> None:

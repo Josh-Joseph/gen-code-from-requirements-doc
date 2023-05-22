@@ -1,6 +1,10 @@
 """File IO utilities for the project."""
 
 
+from pathlib import Path
+import difflib
+
+
 from prompt_templates.information_retrieval import find_project_root_directory_name_template
 from utils.llm import query_llm
 from utils.log import log
@@ -47,3 +51,22 @@ def load_code_file(project_path: str, root_folder_name: str, file_path: str) -> 
     with open(f"{project_path}/{root_folder_name}/{file_path}", "r") as file:
         code = file.read()
     return code
+
+
+def compute_diffs(original: str, modified: str) -> str:
+    """Compute the diffs between the original and modified code."""
+    diff = difflib.unified_diff(
+        original.splitlines(),
+        modified.splitlines(),
+        lineterm='',
+        fromfile='Original',
+        tofile='Modified')
+    return '\n'.join(diff)
+
+
+def get_file_paths(directory: str) -> list[str]:
+    file_paths = []
+    for filepath in Path(directory).rglob('*'):
+        if filepath.is_file():
+            file_paths.append(str(filepath))
+    return file_paths

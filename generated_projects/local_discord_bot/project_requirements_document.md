@@ -10,6 +10,7 @@ The purpose of this discord bot is to allow users to send messages and have thos
 - The user names the bot stores should be their full discord user names
 - The bot listens for messages from its subscribers and responds with dictionary containing a mapping of each character in the message to a count of the number of times that character appeared in the message
 - A subscriber can be removed from the subscriber list with the message "bot unsubscribe me!". the bot will confirm subscription by sending the message "You have been unsubscribed {user}!"
+- The subscribe and unsubscribe messages must not be commands. They must be sent as regular messages.
 - All messages sent should be sent as replies to the user's original message.
 - The bot must be run by a bash script `<project_root>/set_up_and_run_bot.sh` that will do the following:
   - Create a python virtual environment at `<project_root>/.venv`
@@ -23,3 +24,4 @@ The purpose of this discord bot is to allow users to send messages and have thos
   - Log all messages received and sent by the bot at the `DEBUG` level
   - Log all actions taken by the bot at the `INFO` level (such as subscribing users or unsubscribing users)
 - The discord token is stored in the environment variable named `DISCORD_TOKEN`
+- Ensure that you have set `intents.message_content = True`

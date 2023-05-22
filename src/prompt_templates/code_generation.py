@@ -1,5 +1,5 @@
 def code_template(requirements, design, file_path):
-    return f"""These are the requirements for the codebase:
+    return f"""This is the requirements document for the codebase:
 ```markdown
 {requirements}
 ```
@@ -13,7 +13,8 @@ Your instructions:
 - Generate the content for {file_path} only. Look at the file extension to know what type of content to generate.
 - Only respond with the filename (including the full path you were given) and contents for the single file.
 - Do not write any re-amble or post-amble text around the single file.
-- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable."""
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
+- All code must be consistent with the requirements document and design document."""
 
 
 def file_structure_template(design, project_path):
@@ -48,7 +49,7 @@ Your instructions:
 
 
 def fix_code_template(requirements, design, filename, code, stderr):
-    return f"""These are the requirements for the codebase:
+    return f"""This is the requirements document for the codebase:
 ```markdown
 {requirements}
 ```
@@ -72,4 +73,33 @@ Your instructions:
 - Generate the content for {filename} only. Look at the file extension to know what type of content to generate.
 - Do not write any re-amble or post-amble text around the single file.
 - If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
-- Make sure the updated code you respond with fixes the error that was thrown from the original code."""
+- Make sure the updated code you respond with fixes the error that was thrown from the original code.
+- Look carefully through the code and fix any additional errors you find or improvements that should be made."""
+
+
+def improve_code_template(requirements, design, filename, code, improvements):
+    return f"""These are the requirements for the codebase:
+```markdown
+{requirements}
+```
+     
+And the design document:
+```markdown
+{design}
+```
+
+And here is the code for {filename}:
+```
+{code}
+```
+
+Here are necessary improvements:
+{improvements}
+
+Your instructions:
+- Generate the content for {filename} only. Look at the file extension to know what type of content to generate.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
+- Make sure the updated code you respond with includes the necessary improvements.
+- Look carefully through the code and fix any additional errors you find or improvements that should be made.
+- All changes must be consistent with the requirements document and design document."""

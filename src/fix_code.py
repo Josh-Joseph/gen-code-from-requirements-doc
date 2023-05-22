@@ -11,19 +11,9 @@ import fire
 from prompt_templates.information_retrieval import find_file_with_erorr_template
 from prompt_templates.code_generation import fix_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
-from utils.file_io import load_project_requirements, load_design_document, get_project_root_folder_name, write_file, load_code_file
+from utils.file_io import (load_project_requirements, load_design_document, get_project_root_folder_name,
+                           write_file, load_code_file, compute_diffs)
 from utils.log import log
-
-
-def compute_diffs(original: str, modified: str) -> str:
-    """Compute the diffs between the original and modified code."""
-    diff = difflib.unified_diff(
-        original.splitlines(),
-        modified.splitlines(),
-        lineterm='',
-        fromfile='Original',
-        tofile='Modified')
-    return '\n'.join(diff)
 
 
 def run_script_inside_subprocess_with_timeout(
@@ -62,8 +52,8 @@ def fix_code(project_path: str, bash_script: str, max_attempts: int = 5) -> None
     design_document = load_design_document(project_path)
     root_folder_name = get_project_root_folder_name(project_path)
     code_errors_out = True
-    attemps = 1
-    while code_errors_out and attemps <= max_attempts:
+    attempts = 1
+    while code_errors_out and attempts <= max_attempts:
         stdout, stderr = run_script_inside_subprocess_with_timeout(
             project_path, root_folder_name, bash_script)
 
@@ -84,7 +74,7 @@ def fix_code(project_path: str, bash_script: str, max_attempts: int = 5) -> None
             log.info(compute_diffs(code, content))
             write_file(
                 f"{project_path}/{root_folder_name}/{path_and_filename}", content)
-            attemps += 1
+            attempts += 1
 
 
 if __name__ == "__main__":
