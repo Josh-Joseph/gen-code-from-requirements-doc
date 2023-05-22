@@ -1,18 +1,26 @@
-def code_template(design, file_path):
-    return f"""Given on the following design:
+def code_template(requirements, design, file_path):
+    return f"""This is the requirements document for the codebase:
+```markdown
+{requirements}
+```
+     
+And the design document:
+```markdown
 {design}
+```
 
-Your Instructions:
+Your instructions:
 - Generate the content for {file_path} only. Look at the file extension to know what type of content to generate.
-- Only respond with the filename (including the full path you were given) and contents for the single Python file.
-- Do not write any re-amble or post-amble text around the single Python file.
-- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable."""
+- Only respond with the filename (including the full path you were given) and contents for the single file.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
+- All code must be consistent with the requirements document and design document."""
 
 
-def file_structure_template(design_document, project_path):
+def file_structure_template(design, project_path):
     return f"""Write a Python script which generates file structure based on the following design document:
 ```markdown
-{design_document}
+{design}
 ```
 
 Only respond with a single Python file named `generate_file_structure.py`.
@@ -25,3 +33,73 @@ The Python script must:
 Do not write any code that will go in the files described in the design document.
 Do not write any re-amble or post-amble text around the single Python file.
 Respond with full, valid, correct, and runnable Python code."""
+
+
+def bash_script_template(design):
+    return f"""Given on the following design document:
+```markdown
+{design}
+```
+
+Your instructions:
+- Generate the a bash script to set up the virtual environment, install the dependencies, and run the code. Assume the bash script will be run from the project's root directory.
+- Ensure the bash script is correct and only uses valid bash syntax.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable."""
+
+
+def fix_code_template(requirements, design, filename, code, stderr):
+    return f"""This is the requirements document for the codebase:
+```markdown
+{requirements}
+```
+     
+And the design document:
+```markdown
+{design}
+```
+
+When the code for {filename} is run:
+```
+{code}
+```
+
+It throws the following error:
+```
+{stderr}
+```
+
+Your instructions:
+- Generate the content for {filename} only. Look at the file extension to know what type of content to generate.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
+- Make sure the updated code you respond with fixes the error that was thrown from the original code.
+- Look carefully through the code and fix any additional errors you find or improvements that should be made."""
+
+
+def improve_code_template(requirements, design, filename, code, improvements):
+    return f"""These are the requirements for the codebase:
+```markdown
+{requirements}
+```
+     
+And the design document:
+```markdown
+{design}
+```
+
+And here is the code for {filename}:
+```
+{code}
+```
+
+Here are necessary improvements:
+{improvements}
+
+Your instructions:
+- Generate the content for {filename} only. Look at the file extension to know what type of content to generate.
+- Do not write any re-amble or post-amble text around the single file.
+- If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
+- Make sure the updated code you respond with includes the necessary improvements.
+- Look carefully through the code and fix any additional errors you find or improvements that should be made.
+- All changes must be consistent with the requirements document and design document."""

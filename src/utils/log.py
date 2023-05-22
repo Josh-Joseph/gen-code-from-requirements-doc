@@ -1,3 +1,6 @@
+"""Logging module for the project."""
+
+
 import logging
 
 
