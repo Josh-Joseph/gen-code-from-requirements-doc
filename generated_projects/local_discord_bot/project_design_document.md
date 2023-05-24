@@ -17,7 +17,7 @@
 
 ## Last Updated
 
-2023-05-23
+2023-05-24
 
 ## Overview
 
@@ -33,9 +33,9 @@ The purpose of this project is to create a Discord bot that allows users to subs
 
 ```graphviz
 digraph G {
-    "set_up_and_run_bot.sh" -> "src/bot.py";
-    "src/bot.py" -> "src/utils.py";
-    "src/bot.py" -> "requirements.txt";
+    "set_up_and_run_bot.sh" -> "src/bot.py"
+    "src/bot.py" -> "src/utils.py"
+    "src/bot.py" -> "requirements.txt"
 }
 ```
 
@@ -55,7 +55,7 @@ local_discord_bot
 
 ## Logging
 
-The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all messages received and sent by the bot at the `DEBUG` level and all actions taken by the bot at the `INFO` level.
+The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all messages received and sent by the bot at the `DEBUG` level and all actions taken by the bot at the `INFO` level (such as subscribing users or unsubscribing users).
 
 ## set_up_and_run_bot.sh
 
@@ -63,23 +63,18 @@ A bash script that sets up the Python virtual environment, installs the necessar
 
 ## src/bot.py
 
-The main file for the Discord bot that handles subscribing and unsubscribing users, listening for messages, and replying with character counts.
+The main file for the Discord bot, handling the bot's functionality and interactions with users.
 
 - Third-party Python packages: `discord.py`
 - Environment variables: `DISCORD_TOKEN`
 
 - `class CharacterCountBot(discord.Client)`
-  - The main bot class that inherits from `discord.Client`.
-
-  - `async def on_ready(self) -> None`
-    - Called when the bot is ready to start processing events.
-    - Example: `await bot.on_ready()`
-
-  - `async def on_message(self, message: discord.Message) -> None`
-    - Called when a message is received.
-    - Example: `await bot.on_message(message)`
-
-- `def main() -> None`
+  - A subclass of `discord.Client` that implements the character counting bot functionality.
+  - `async def on_ready(self)`
+    - Called when the bot is ready and connected to Discord.
+  - `async def on_message(self, message: discord.Message)`
+    - Called when a message is received. Handles subscribing, unsubscribing, and character counting for subscribers.
+- `def main()`
   - The main function that initializes and runs the bot.
 
 ## src/utils.py
@@ -87,8 +82,8 @@ The main file for the Discord bot that handles subscribing and unsubscribing use
 Utility functions for the Discord bot.
 
 - `def count_characters(text: str) -> Dict[str, int]`
-  - Counts the occurrences of each character in the given text.
-  - Example: `count_characters("hello") -> {'h': 1, 'e': 1, 'l': 2, 'o': 1}`
+  - Counts the occurrences of each character in the given text and returns a dictionary mapping characters to their counts.
+  - Example input-output pair: `("hello", {"h": 1, "e": 1, "l": 2, "o": 1})`
 
 ## requirements.txt
 

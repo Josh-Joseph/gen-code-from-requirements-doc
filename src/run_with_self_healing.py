@@ -1,9 +1,7 @@
 """Fix the code for the project."""
 
 
-from pathlib import Path
 import subprocess
-import difflib
 import time
 
 import fire
@@ -20,7 +18,7 @@ def run_script_inside_subprocess_with_timeout(
     project_path: str,
     root_folder_name: str,
     bash_script: str,
-    timeout: str = 10
+    timeout: str | None = None
 ) -> tuple[str | None, str | None]:
     """Run the script inside a subprocess with a timeout."""
     start = time.time()
@@ -31,10 +29,11 @@ def run_script_inside_subprocess_with_timeout(
     while True:
         if process.poll() is not None:  # If the process has finished
             break
-        if time.time() - start > timeout:  # If timeout has passed
-            process.terminate()
-            log.debug(f"Script was terminated after {timeout} seconds.")
-            return None, None
+        if timeout is not None:
+            if time.time() - start > timeout:  # If timeout has passed
+                process.terminate()
+                log.debug(f"Script was terminated after {timeout} seconds.")
+                return None, None
         time.sleep(0.1)  # Sleep for a short time to prevent busy waiting
 
     stdout, stderr = process.communicate()
@@ -42,7 +41,7 @@ def run_script_inside_subprocess_with_timeout(
     return stdout, stderr
 
 
-def fix_code(project_path: str, max_attempts: int = 3) -> None:
+def fix_code(project_path: str, max_attempts: int = 25) -> None:
     """Fix the code for the project.
     
     Args:

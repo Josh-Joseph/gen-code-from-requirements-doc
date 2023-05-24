@@ -54,7 +54,7 @@ def query_llm(message: str, max_attempts: int = 3) -> str | None:
 
 
 def send_templated_message_to_llm(message: str) -> tuple[str, str]:
-    # Anicdotally, sending the system message as the system message (as opposed to just
+    # Anecdotally, sending the system message as the system message (as opposed to just
     # including it in the user message) seems to work better.
     system_message = system_message_template()
     reply = query_llm(
