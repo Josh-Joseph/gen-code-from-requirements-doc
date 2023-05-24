@@ -11,9 +11,9 @@ from utils.llm import query_llm
 from utils.log import log
 
 
-def load_project_requirements(project_path: str) -> str:
+def load_project_requirements(requirements_document_path: str) -> str:
     """Load the project requirements from the project_requirements_document.md file."""
-    with open(f"{project_path}/project_requirements_document.md", "r") as file:
+    with open(requirements_document_path, "r") as file:
         project_requirements = file.read()
     return project_requirements
 
@@ -27,6 +27,7 @@ def load_design_document(project_path: str) -> str:
 
 def write_file(path_and_filename: str, content: str) -> None:
     """Write the content to the file."""
+    Path(path_and_filename).parent.mkdir(parents=True, exist_ok=True)
     with open(path_and_filename, "w") as file:
         file.write(content)
     log.debug(f"Wrote out file: {path_and_filename}")

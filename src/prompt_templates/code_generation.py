@@ -102,4 +102,4 @@ Your instructions:
 - If you are generating code, all code must be cleanly-written, full, valid, correct, and runnable.
 - Make sure the updated code you respond with includes the necessary improvements.
 - Look carefully through the code and fix any additional errors you find or improvements that should be made.
-- All changes must be consistent with the requirements document and design document."""
+- Under no circumstances should you make a change that conflicts with what is written in the requirements document or design document."""

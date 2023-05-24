@@ -17,7 +17,7 @@ def generate_file_structure(project_path: str) -> None:
     """
     design_document = load_design_document(project_path)
     message_to_send = file_structure_template(design_document, project_path)
-    path_and_filename, content = send_templated_message_to_llm(message_to_send)
+    path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_attempts=3)
     write_file(path_and_filename, content)
 
 

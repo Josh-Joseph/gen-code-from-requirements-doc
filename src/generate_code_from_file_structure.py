@@ -32,10 +32,12 @@ def generate_code(project_path: str, n_jobs: int | None = None) -> None:
     def process_file(fp, wait_seconds):
         time.sleep(wait_seconds)  # Wait to prevent overloading LLM API
         message_to_send = code_template(project_requirements, design_document, fp)
-        path_and_filename, content = send_templated_message_to_llm(message_to_send)
+        path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
         write_file(path_and_filename, content)
 
-    Parallel(n_jobs=len(file_paths))(delayed(process_file)(fp, wait_seconds) 
+    print("*************************fix njobs!!!")
+    # Parallel(n_jobs=len(file_paths))(delayed(process_file)(fp, wait_seconds) 
+    Parallel(n_jobs=1)(delayed(process_file)(fp, wait_seconds) 
                                      for wait_seconds, fp in enumerate(file_paths))
 
 if __name__ == "__main__":

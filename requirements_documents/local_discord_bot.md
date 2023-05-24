@@ -25,3 +25,8 @@ The purpose of this discord bot is to allow users to send messages and have thos
   - Log all actions taken by the bot at the `INFO` level (such as subscribing users or unsubscribing users)
 - The discord token is stored in the environment variable named `DISCORD_TOKEN`
 - Ensure that you have set `intents.message_content = True`
+- Inside the bash script that runs the bot, make sure to:
+    - Create the virtual environment, activate it, install the required packages
+    - Run the tests
+    - Start the bot
+- Use the MIT license for the project

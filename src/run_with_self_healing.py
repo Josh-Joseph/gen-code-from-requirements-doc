@@ -66,7 +66,7 @@ def fix_code(project_path: str, max_attempts: int = 25) -> None:
             log.debug(f"stdout: {stdout}")
             log.debug(f"stderr: {stderr}")
             message_to_send = find_file_with_erorr_template(
-                design_document, stderr)
+                design_document, stdout, stderr)
             reply = query_llm(message_to_send)
             code = load_code_file(project_path, root_folder_name, reply)
             message_to_send = fix_code_template(

@@ -31,7 +31,7 @@ High-level workflow:
     ```
     python src/generate_code_from_file_structure.py --project_path generated_projects/<human_project_name>
     ```
-- Use GPT-4 improve the code: 
+- Use GPT-4 improve the code TODO REMOVE?: 
     ```
     python src/improve_code.py --project_path generated_projects/<human_project_name>
     ```
@@ -64,6 +64,7 @@ It works though!
 - Generally this seems super promising. Check out the generated design documents! Not bad. Definitely did better than I thought but we are _not_ there yet, at least going about it this way.
 - Specifying what I want in a requirements file and then using a design document as an intermediate step was great. It seems like for the forseeable future a middle step (or two!) between "me writing what I want" and "generate code" that GPT-4 generates seems extremely helpful (both for human-interpretable debugging and producing higher quality code). For example, the "Ensure that you have set `intents.message_content = True`" in the requirements document is just a bug that neither improve code or fix code finds so I just .. had to add it to the requirements but that doesn't seem like the right place for it.
 - There's definitely some being mindful about what the LLM needs to generate functional code and explicitly stating that should appear in the design document (e.g., environment variables, logging).
+- Having the LLM iteratively reflect on its response and improve the response seemed to be super helpful.
 - Generating in a one-forward-pass mode is far too hard. Getting the requirements doc + prompts right definitely took a couple dozen iterations. I think this needs to be an iterative (with a human in the loop) process. And "iterating" by editing prompts and re-running makes it too hard to capture the changes.
 - Context size is going to make this impossible for anything but tiny projects (ideally, we'd have the requirements and design doc in context while writing code but that'll easily fill half the context of GPT-4 by itself).
 - Remember the LLM is trained on all the data from the internet: beginner, intermediate, advanced, trash, power users, puzzles, etc. So if you want it be an expert, tell it to be an expert! The same thing goes for package versions, it can sometimes use out-dated packages (even though it knows about newer versions) so tell it to use update-to-date packages.

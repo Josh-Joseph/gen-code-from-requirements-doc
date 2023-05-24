@@ -19,3 +19,8 @@ The purpose of this bot is to monitor for issues that are created in a GitHub re
 - Use the built-in `logging` module with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC.
   - Log all new occurrences of issues and actions taken by the bot at the `INFO` level.
 - The GitHub token is stored in the environment variable named `TOKEN_FOR_GITHUB`.
+- Inside the bash script that runs the bot, make sure to:
+    - Create the virtual environment, activate it, install the required packages
+    - Run the tests
+    - Start the bot
+- Use the MIT license for the project
