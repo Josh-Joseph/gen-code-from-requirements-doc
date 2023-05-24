@@ -12,7 +12,7 @@ from prompt_templates.information_retrieval import find_file_with_erorr_template
 from prompt_templates.code_generation import fix_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
 from utils.file_io import (load_project_requirements, load_design_document, get_project_root_folder_name,
-                           write_file, load_code_file, compute_diffs)
+                           write_file, load_code_file, compute_diffs, get_main_script_name)
 from utils.log import log
 
 
@@ -24,8 +24,10 @@ def run_script_inside_subprocess_with_timeout(
 ) -> tuple[str | None, str | None]:
     """Run the script inside a subprocess with a timeout."""
     start = time.time()
-    process = subprocess.Popen([f"./{bash_script}"], cwd=f"{project_path}/{root_folder_name}",
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen([f"./{bash_script}"], 
+                               cwd=f"{project_path}/{root_folder_name}",
+                               stdout=subprocess.PIPE, 
+                               stderr=subprocess.PIPE)
     while True:
         if process.poll() is not None:  # If the process has finished
             break
@@ -40,17 +42,18 @@ def run_script_inside_subprocess_with_timeout(
     return stdout, stderr
 
 
-def fix_code(project_path: str, bash_script: str, max_attempts: int = 5) -> None:
+def fix_code(project_path: str, max_attempts: int = 3) -> None:
     """Fix the code for the project.
     
     Args:
         project_path: The path to the project.
-        bash_script: The name of the bash script to run.
         max_attempts: The maximum number of attempts to fix the code.
     """
     project_requirements = load_project_requirements(project_path)
     design_document = load_design_document(project_path)
     root_folder_name = get_project_root_folder_name(project_path)
+    bash_script = get_main_script_name(project_path)
+    subprocess.run(["chmod", "+x", f"{project_path}/{root_folder_name}/{bash_script}"])
     code_errors_out = True
     attempts = 1
     while code_errors_out and attempts <= max_attempts:

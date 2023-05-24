@@ -6,16 +6,17 @@ import subprocess
 import time
 
 import fire
+from joblib import Parallel, delayed
 
 from prompt_templates.information_retrieval import find_code_improvements_template
-from prompt_templates.code_generation import fix_code_template, improve_code_template
+from prompt_templates.code_generation import improve_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
 from utils.file_io import (load_project_requirements, load_design_document, get_project_root_folder_name,
                            write_file, load_code_file, get_file_paths, compute_diffs)
 from utils.log import log
 
 
-def improve_code(project_path: str, max_attempts: int = 5) -> None:
+def improve_code(project_path: str, max_attempts: int = 3) -> None:
     """Improve the code for the project.
 
     Args:
@@ -26,7 +27,9 @@ def improve_code(project_path: str, max_attempts: int = 5) -> None:
     design_document = load_design_document(project_path)
     root_folder_name = get_project_root_folder_name(project_path)
     file_paths = get_file_paths(f"{project_path}/{root_folder_name}")
-    for fp in file_paths:
+    
+    def process_file(fp, wait_seconds):
+        time.sleep(wait_seconds)  # Wait to prevent overloading LLM API
         attempts = 1
         needs_improvement = True
         while needs_improvement and attempts <= max_attempts:
@@ -47,6 +50,9 @@ def improve_code(project_path: str, max_attempts: int = 5) -> None:
                 write_file(
                     f"{project_path}/{root_folder_name}/{path_and_filename}", content)
                 attempts += 1
+
+    Parallel(n_jobs=len(file_paths))(delayed(process_file)(fp, wait_seconds) 
+                                     for wait_seconds, fp in enumerate(file_paths))
 
 
 if __name__ == "__main__":

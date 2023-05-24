@@ -9,6 +9,18 @@ Only respond with the name of the root directory, not the full path.
 Do not include any other text or formatting."""
 
 
+def find_project_main_script_name_template(design):
+    return f"""Given on the following design document:
+```markdown
+{design}
+```
+
+What is the path and filename of the bash script that runs the code?
+Only respond with the path and filename to the bash script from the project's root directory.
+Do not include any other text or formatting.
+Only respond with the single string."""
+
+
 def find_file_with_erorr_template(design, stderr):
     return f"""Given on the following design document:
 ```markdown

@@ -26,6 +26,7 @@ Write a design document based on these requirements. The design document must:
         - List any third-party Python packages that will be used in the file.
         - List of any environment variables the file will use.
         - Populate the section with each function, class, and class method that will appear in the file and bullets. Do not create subsections for each function, class, and class method. Include a description for each function, class, and class method as sub-bullets. Include an example input-output pair for each function and class method, when applicable as sub-bullets.
+        - Include the full function, method, and class initialization signatures with type hints and docstrings.
         - An example section should look like:
             ```markdown
             <filename>

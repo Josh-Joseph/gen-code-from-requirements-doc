@@ -93,7 +93,7 @@ And here is the code for {filename}:
 {code}
 ```
 
-Here are necessary improvements:
+Here are the necessary improvements:
 {improvements}
 
 Your instructions:

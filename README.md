@@ -35,7 +35,7 @@ High-level workflow:
     ```
     python src/improve_code.py --project_path generated_projects/<human_project_name>
     ```
-- Use GPT-4 fix errors that occur when the project is run (you'll likely have to run a `chmod +x generated_projects/<human_project_name>/<gpt4_project_name>/set_up_and_run_bot.sh ` for this to work): 
+- Use GPT-4 fix errors that occur when the project is run (note this script calls `chmod +x` on the bash script): 
     ```
     python src/fix_code.py --project_path generated_projects/<human_project_name> --bash_script <set_up_and_run_bash_script>
     ```
@@ -43,11 +43,17 @@ High-level workflow:
 ## Experiments
 
 ### Local Discord Character Counter Bot
-So far, I've only tested this on creating a silly discord bot that counts characters of messages sent by "subscribers" to it (see `sgenerated_projects/local_discord_bot/local_discord_bot/project_requirements_document.md` for the full requirements). Note the folders are named `generated_projects/<human_project_name>/<gpt4_project_name>`. Inside `generated_projects/local_discord_bot/`, `project_requirements_document.md` is the only file I manually created.
+This is a first silly test - a discord bot that runs locally counts characters of messages sent by "subscribers" to it (see `sgenerated_projects/local_discord_bot/local_discord_bot/project_requirements_document.md` for the full requirements). Note the folders are named `generated_projects/<human_project_name>/<gpt4_project_name>`. Inside `generated_projects/local_discord_bot/`, `project_requirements_document.md` is the only file I manually created.
 
 The code improvement and code fix steps definitely helped. Fix code was only helpful when it wouldn't run. Improve code was helpful to catch errors that only appeared during interaction.
 
 It works though!
+
+### GitHub Issues to PR Bot
+
+
+
+
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs some love.
