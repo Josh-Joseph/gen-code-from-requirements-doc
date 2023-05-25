@@ -8,16 +8,7 @@
 - [Dependency Diagram](#dependency-diagram)
 - [File Structure](#file-structure)
 - [Logging](#logging)
-- [set_up_and_run_bot.sh](#set_up_and_run_botsh)
-- [src/bot.py](#srcbotpy)
-- [src/message_handler.py](#srcmessage_handlerpy)
-- [src/subscriber_manager.py](#srcsubscriber_managerpy)
-- [tests/test_bot.py](#teststest_botpy)
-- [tests/test_message_handler.py](#teststest_message_handlerpy)
-- [tests/test_subscriber_manager.py](#teststest_subscriber_managerpy)
-- [requirements.txt](#requirementstxt)
-- [readme.md](#readmemd)
-- [LICENSE](#license)
+- [File Descriptions](#file-descriptions)
 
 ## Last Updated
 
@@ -25,22 +16,27 @@
 
 ## Overview
 
-The purpose of this project is to create a Discord bot that allows users to send messages and have those messages' characters counted by the bot and sent back to the user as a reply to their message. The bot will also manage subscriptions and unsubscriptions of users.
+The purpose of this project is to create a Discord bot that allows users to subscribe and have their messages' characters counted by the bot. The bot will reply with a dictionary containing a mapping of each character in the message to a count of the number of times that character appeared in the message.
 
 ## Setup and Usage Instructions
 
 1. Clone the repository.
 2. Set the `DISCORD_TOKEN` environment variable with your Discord bot token.
-3. Run the `set_up_and_run_bot.sh` script to set up the virtual environment, install the required packages, and start the bot.
+3. Run the `set_up_and_run_bot.sh` script to create a virtual environment, install the necessary requirements, and start the bot.
 
 ## Dependency Diagram
 
 ```graphviz
 digraph G {
-    bot -> message_handler;
-    bot -> subscriber_manager;
-    message_handler -> subscriber_manager;
-    bot -> discord [label="third-party"];
+    "set_up_and_run_bot.sh" -> "requirements.txt";
+    "src" -> "requirements.txt";
+    "tests" -> "src";
+    "tests" -> "requirements.txt";
+    "discord.py" [shape=box];
+    "src/bot.py" -> "discord.py";
+    "pytest" [shape=box];
+    "tests/test_bot.py" -> "pytest";
+    "tests/test_message_handler.py" -> "pytest";
 }
 ```
 
@@ -48,93 +44,86 @@ digraph G {
 
 ```
 generated_projects/local_discord_bot
-├── .venv
+├── LICENSE
+├── project_design_document.md
+├── readme.md
+├── requirements.txt
 ├── set_up_and_run_bot.sh
 ├── src
+│   ├── __init__.py
 │   ├── bot.py
-│   ├── message_handler.py
-│   └── subscriber_manager.py
+│   └── message_handler.py
 ├── tests
+│   ├── __init__.py
 │   ├── test_bot.py
-│   ├── test_message_handler.py
-│   └── test_subscriber_manager.py
-├── requirements.txt
-├── readme.md
-└── LICENSE
+│   └── test_message_handler.py
+└── .venv
 ```
 
 ## Logging
 
 The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all messages received and sent by the bot at the `DEBUG` level and all actions taken by the bot at the `INFO` level.
 
-## set_up_and_run_bot.sh
+## File Descriptions
 
-Bash script to set up the virtual environment, install the required packages, and start the bot.
+### readme.md
+A brief description of the project and instructions on how to set up and use the Discord bot.
+- No third-party Python packages.
+- No environment variables.
 
-## src/bot.py
+### project_design_document.md
+The design document for the project, detailing the project's purpose, setup instructions, dependencies, file structure, logging, and file descriptions.
+- No third-party Python packages.
+- No environment variables.
 
-Main entry point for the Discord bot.
+### set_up_and_run_bot.sh
+A bash script that creates a Python virtual environment, installs the necessary requirements, and starts the bot.
+- No third-party Python packages.
+- No environment variables.
 
-- Third-party packages: `discord`
-- Environment variables: `DISCORD_TOKEN`
+### requirements.txt
+A list of required Python packages for the project.
+- No third-party Python packages.
+- No environment variables.
 
+### LICENSE
+The MIT License for the project.
+- No third-party Python packages.
+- No environment variables.
+
+### src/bot.py
+The main file for the Discord bot, responsible for connecting to Discord and handling events.
+- Third-party Python packages: discord.py
+- Environment variables: DISCORD_TOKEN
 - `async def main() -> None`
-  - Description: Starts the bot and connects it to Discord.
-- `if __name__ == "__main__":`
-  - Description: Calls the `main` function when the script is executed.
+  - The main function that connects the bot to Discord and runs it indefinitely.
+- `async def on_ready() -> None`
+  - Event handler for when the bot is connected and ready to receive messages. Configures logging and sets intents.message_content to True.
+- `async def on_message(message: discord.Message) -> None`
+  - Event handler for when a message is received by the bot. Processes subscribe and unsubscribe messages, and replies with character counts for subscribed users' messages.
 
-## src/message_handler.py
+### src/message_handler.py
+Handles message processing, including subscribing and unsubscribing users, and character counting.
+- No third-party Python packages.
+- No environment variables.
+- `class MessageHandler`
+  - `def __init__(self) -> None`
+    - Initializes the MessageHandler instance.
+  - `async def handle_message(self, message: discord.Message) -> discord.Message`
+    - Processes the message, handles subscribe and unsubscribe messages, and returns an appropriate response as a reply to the user's original message.
+  - `def subscribe_user(self, user: str) -> None`
+    - Adds a user to the list of subscribers.
+  - `def unsubscribe_user(self, user: str) -> None`
+    - Removes a user from the list of subscribers.
+  - `def count_characters(self, message: str) -> Dict[str, int]`
+    - Counts the characters in a message and returns a dictionary mapping characters to their counts.
 
-Handles incoming messages and processes them accordingly.
+### tests/test_bot.py
+Test file for the bot.py module.
+- Third-party Python packages: pytest, discord.py
+- No environment variables.
 
-- Third-party packages: `discord`
-
-- `class MessageHandler:`
-  - Description: Class responsible for handling messages and processing them.
-
-  - `async def handle_message(self, message: discord.Message) -> None`
-    - Description: Processes an incoming message and takes appropriate action based on its content.
-    - Example input-output pair: `message="bot I want to subscribe!"` -> bot subscribes the user and sends a confirmation message.
-
-## src/subscriber_manager.py
-
-Manages the list of subscribers and provides methods to add and remove subscribers.
-
-- `class SubscriberManager:`
-  - Description: Class responsible for managing the list of subscribers.
-
-  - `def add_subscriber(self, user: str) -> None`
-    - Description: Adds a user to the list of subscribers.
-    - Example input-output pair: `user="JohnDoe#1234"` -> user is added to the list of subscribers.
-
-  - `def remove_subscriber(self, user: str) -> None`
-    - Description: Removes a user from the list of subscribers.
-    - Example input-output pair: `user="JohnDoe#1234"` -> user is removed from the list of subscribers.
-
-  - `def is_subscriber(self, user: str) -> bool`
-    - Description: Checks if a user is a subscriber.
-    - Example input-output pair: `user="JohnDoe#1234"` -> `True` if the user is a subscriber, `False` otherwise.
-
-## tests/test_bot.py
-
-Test cases for the `bot.py` module.
-
-## tests/test_message_handler.py
-
-Test cases for the `message_handler.py` module.
-
-## tests/test_subscriber_manager.py
-
-Test cases for the `subscriber_manager.py` module.
-
-## requirements.txt
-
-List of required Python packages for the project.
-
-## readme.md
-
-Documentation for the project, including setup and usage instructions.
-
-## LICENSE
-
-MIT License for the project.
+### tests/test_message_handler.py
+Test file for the message_handler.py module.
+- Third-party Python packages: pytest
+- No environment variables.

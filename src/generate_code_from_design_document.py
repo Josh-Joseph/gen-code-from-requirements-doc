@@ -14,6 +14,15 @@ from utils.file_io import load_project_requirements, load_design_document, write
 from config import project_configs
 
 
+def process_file(fp, project_requirements, design_document, wait_seconds):
+    if "project_design_document.md" in fp:
+        return
+    time.sleep(wait_seconds)  # Wait to prevent overloading LLM API
+    message_to_send = code_template(project_requirements, design_document, fp)
+    path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
+    write_file(path_and_filename, content)
+
+
 def generate_code(project_name: str, n_jobs: int | None = None) -> None:
     """Generate the file structure from the design document.
 
@@ -31,18 +40,14 @@ def generate_code(project_name: str, n_jobs: int | None = None) -> None:
     files_to_generate = get_files_to_generate(design_document)
     file_paths = [f"{root_folder_name}/{file_to_generate}" for file_to_generate in files_to_generate]
 
-    def process_file(fp, wait_seconds):
-        time.sleep(wait_seconds)  # Wait to prevent overloading LLM API
-        message_to_send = code_template(project_requirements, design_document, fp)
-        path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
-        write_file(path_and_filename, content)
-
     if n_jobs is None:
         n_jobs = len(file_paths)
-    print("*************************fix njobs!!!")
-    # Parallel(n_jobs=n_jobs)(delayed(process_file)(fp, wait_seconds) 
-    Parallel(n_jobs=1)(delayed(process_file)(fp, wait_seconds) 
-                                     for wait_seconds, fp in enumerate(file_paths))
+    # Parallel(n_jobs=n_jobs)(delayed(process_file)(
+    #     fp, project_requirements, design_document, wait_seconds) 
+    #     for wait_seconds, fp in enumerate(file_paths))
+    for wait_seconds, fp in enumerate(file_paths):
+        process_file(fp, project_requirements, design_document, wait_seconds)
+
 
 if __name__ == "__main__":
     fire.Fire(generate_code)
