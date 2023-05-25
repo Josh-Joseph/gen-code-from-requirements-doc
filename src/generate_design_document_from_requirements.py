@@ -17,7 +17,7 @@ def generate_design_doc(project_name: str) -> None:
     """
     project_requirements = load_project_requirements(project_configs[project_name]["requirements_document"])
     message_to_send = design_document_template(project_requirements, project_configs[project_name]["project_path"])
-    path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_attempts=3)
+    path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
     write_file(path_and_filename, content)
 
 

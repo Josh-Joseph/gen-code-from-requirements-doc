@@ -5,8 +5,9 @@ from pathlib import Path
 import difflib
 
 
-from prompt_templates.information_retrieval import (find_project_root_directory_name_template,
-                                                    find_project_main_script_name_template)
+from prompt_templates.information_retrieval import (
+    find_project_root_directory_name_template, find_project_main_script_name_template, 
+    find_project_files_to_generate_template)
 from utils.llm import query_llm
 from utils.log import log
 
@@ -61,6 +62,12 @@ def get_main_script_name(project_path: str) -> str:
     message_to_send = find_project_main_script_name_template(design_document)
     reply = query_llm(message_to_send)
     return reply
+
+
+def get_files_to_generate(design_document: str) -> list[str]:
+    message_to_send = find_project_files_to_generate_template(design_document)
+    reply = query_llm(message_to_send)
+    return eval(reply)
 
 
 def load_code_file(project_path: str, root_folder_name: str, file_path: str) -> str:

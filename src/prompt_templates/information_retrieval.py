@@ -21,6 +21,17 @@ Do not include any other text or formatting.
 Only respond with the single string."""
 
 
+def find_project_files_to_generate_template(design):
+    return f"""Given on the following design document:
+```markdown
+{design}
+```
+
+What is the path and filenames of all the files listed in the design document as part of the codebase?
+Do not include any other text or formatting.
+Only respond with a Python-style list containing these files."""
+
+
 def find_file_with_erorr_template(design, stdout, stderr):
     return f"""Given on the following design document:
 ```markdown

@@ -9,19 +9,23 @@
 - [File Structure](#file-structure)
 - [Logging](#logging)
 - [set_up_and_run_bot.sh](#set_up_and_run_botsh)
-- [requirements.txt](#requirementstxt)
-- [LICENSE](#license)
-- [readme.md](#readmemd)
 - [src/bot.py](#srcbotpy)
+- [src/message_handler.py](#srcmessage_handlerpy)
+- [src/subscriber_manager.py](#srcsubscriber_managerpy)
 - [tests/test_bot.py](#teststest_botpy)
+- [tests/test_message_handler.py](#teststest_message_handlerpy)
+- [tests/test_subscriber_manager.py](#teststest_subscriber_managerpy)
+- [requirements.txt](#requirementstxt)
+- [readme.md](#readmemd)
+- [LICENSE](#license)
 
 ## Last Updated
 
-2023-05-24
+2023-05-25
 
 ## Overview
 
-The purpose of this project is to create a Discord bot that allows users to subscribe and have their messages' characters counted by the bot. The bot will reply with a dictionary containing a mapping of each character in the message to a count of the number of times that character appeared in the message.
+The purpose of this project is to create a Discord bot that allows users to send messages and have those messages' characters counted by the bot and sent back to the user as a reply to their message. The bot will also manage subscriptions and unsubscriptions of users.
 
 ## Setup and Usage Instructions
 
@@ -33,74 +37,104 @@ The purpose of this project is to create a Discord bot that allows users to subs
 
 ```graphviz
 digraph G {
-    bot -> discord;
-    test_bot -> bot;
+    bot -> message_handler;
+    bot -> subscriber_manager;
+    message_handler -> subscriber_manager;
+    bot -> discord [label="third-party"];
 }
 ```
 
 ## File Structure
 
 ```
-local_discord_bot
+generated_projects/local_discord_bot
 ├── .venv
-├── LICENSE
-├── readme.md
-├── requirements.txt
 ├── set_up_and_run_bot.sh
 ├── src
-│   └── bot.py
-└── tests
-    └── test_bot.py
+│   ├── bot.py
+│   ├── message_handler.py
+│   └── subscriber_manager.py
+├── tests
+│   ├── test_bot.py
+│   ├── test_message_handler.py
+│   └── test_subscriber_manager.py
+├── requirements.txt
+├── readme.md
+└── LICENSE
 ```
 
 ## Logging
 
-The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all messages received and sent by the bot at the `DEBUG` level and all actions taken by the bot at the `INFO` level (such as subscribing users or unsubscribing users).
+The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all messages received and sent by the bot at the `DEBUG` level and all actions taken by the bot at the `INFO` level.
 
 ## set_up_and_run_bot.sh
 
-A bash script that sets up the virtual environment, installs the required packages, and starts the bot. The script will create a virtual environment at `<project_root>/.venv`, install the necessary requirements into the virtual environment, and start the bot from inside the virtual environment.
-
-## requirements.txt
-
-A list of required Python packages for the project. The file will include the `discord.py` package and any other necessary packages.
-
-## LICENSE
-
-The MIT License for the project.
-
-## readme.md
-
-A brief description of the project and instructions on how to set up and use the bot. The file will include an overview of the bot's functionality, setup instructions, and usage instructions.
+Bash script to set up the virtual environment, install the required packages, and start the bot.
 
 ## src/bot.py
 
-The main file containing the Discord bot implementation.
+Main entry point for the Discord bot.
 
-- Third-party packages: `discord.py`
+- Third-party packages: `discord`
 - Environment variables: `DISCORD_TOKEN`
 
-- `class CharacterCountBot(discord.Client)`
-  - A subclass of `discord.Client` that implements the character counting bot.
-  - `intents.message_content = True`
-  - `async def on_ready(self)`
-    - Logs when the bot is ready and connected to Discord.
-  - `async def on_message(self, message: discord.Message)`
-    - Handles incoming messages, subscribing and unsubscribing users, and replying with character counts.
-    - Example input-output pair: `message: "Hello, world!"` -> `reply: "{'H': 1, 'e': 1, 'l': 3, 'o': 2, ',': 1, ' ': 1, 'w': 1, 'r': 1, 'd': 1, '!': 1}"`
-  - `async def subscribe_user(self, user: discord.User)`
-    - Subscribes a user to the bot and sends a confirmation message.
-  - `async def unsubscribe_user(self, user: discord.User)`
-    - Unsubscribes a user from the bot and sends a confirmation message.
+- `async def main() -> None`
+  - Description: Starts the bot and connects it to Discord.
+- `if __name__ == "__main__":`
+  - Description: Calls the `main` function when the script is executed.
+
+## src/message_handler.py
+
+Handles incoming messages and processes them accordingly.
+
+- Third-party packages: `discord`
+
+- `class MessageHandler:`
+  - Description: Class responsible for handling messages and processing them.
+
+  - `async def handle_message(self, message: discord.Message) -> None`
+    - Description: Processes an incoming message and takes appropriate action based on its content.
+    - Example input-output pair: `message="bot I want to subscribe!"` -> bot subscribes the user and sends a confirmation message.
+
+## src/subscriber_manager.py
+
+Manages the list of subscribers and provides methods to add and remove subscribers.
+
+- `class SubscriberManager:`
+  - Description: Class responsible for managing the list of subscribers.
+
+  - `def add_subscriber(self, user: str) -> None`
+    - Description: Adds a user to the list of subscribers.
+    - Example input-output pair: `user="JohnDoe#1234"` -> user is added to the list of subscribers.
+
+  - `def remove_subscriber(self, user: str) -> None`
+    - Description: Removes a user from the list of subscribers.
+    - Example input-output pair: `user="JohnDoe#1234"` -> user is removed from the list of subscribers.
+
+  - `def is_subscriber(self, user: str) -> bool`
+    - Description: Checks if a user is a subscriber.
+    - Example input-output pair: `user="JohnDoe#1234"` -> `True` if the user is a subscriber, `False` otherwise.
 
 ## tests/test_bot.py
 
-Test cases for the `bot.py` file.
+Test cases for the `bot.py` module.
 
-- Third-party packages: `pytest`
-- `def test_character_count()`
-  - Tests the character counting functionality of the bot.
-- `def test_subscribe_user()`
-  - Tests the user subscription functionality of the bot.
-- `def test_unsubscribe_user()`
-  - Tests the user unsubscription functionality of the bot.
+## tests/test_message_handler.py
+
+Test cases for the `message_handler.py` module.
+
+## tests/test_subscriber_manager.py
+
+Test cases for the `subscriber_manager.py` module.
+
+## requirements.txt
+
+List of required Python packages for the project.
+
+## readme.md
+
+Documentation for the project, including setup and usage instructions.
+
+## LICENSE
+
+MIT License for the project.

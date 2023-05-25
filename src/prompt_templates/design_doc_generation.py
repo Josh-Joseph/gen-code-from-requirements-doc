@@ -13,16 +13,16 @@ Write a design document based on these requirements. The design document must:
     - Setup and usage instructions.
     - Dependency diagram. A diagram drawn written in graphviz syntax that shows the dependencies between the different modules, directories, and files of the project.
         - Include any third-party libraries that will be used in the diagram.
-    - A tree diagram of the modules, directories and file structure as it would look if we were to created by running `tree -a` on a linux system. Alphabetized with folders and files starting with a `.` at the top.
-        - Include the project root directory. Name the project root directory something with summarizes the spirit of the requirements document.
+    - A tree diagram of the modules, directories and file structure as it would look if we were to created by running `tree -a` on a linux system. Order the modules, directories, and files as they would be by `tree` on a linux file system. Alphabetized with folders and files starting with a `.` at the top.
+        - Include the project root directory {file_path} in the tree diagram.
         - Include a `src` and `tests` directory. Each python file in the `src` directory must have a test file in `tests` directory.
-        - Do to make `src` a module (i.e., don't include `__init__.py` file in the `src` directory).
+        - Do not make `src` a module (i.e., don't include `__init__.py` file in the `src` directory).
         - Include any additional files that are necessary for the project to be built and run. Optional examples of these are: a setup.py file, a Dockerfile, a Makefile, a .gitignore file, github actions workflow `.yaml` files, etc.
         - Include a `readme.md` file, a `requirements.txt` file, and a LICENSE file.
-        - Order the modules, directories, and files as they would be by `tree` on a linux file system.
+        - Include a `project_design_document.md` file.
+        - Do not include `.env` files, a `.gitignore` file, a `.git` directory, or a `.venv` directory.
     - Logging. This section must include what logging will be used throughout the codebase.
     - For each file (not folder) in the file structure with the sections ordered by Python files first, then the other files:
-        - Do not create a section if it is only a folder (for example do not create a `.venv` section).
         - Create a section for each file. Only create sections for files. Do not create sections for directories.
         - Write a description of what the purpose of the file is as the first lines of this section. Do not make this description a bullet point.
         - List any third-party Python packages that will be used in the file.
