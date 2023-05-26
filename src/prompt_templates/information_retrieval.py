@@ -27,7 +27,7 @@ def find_project_files_to_generate_template(tech_spec):
 {tech_spec}
 ```
 
-What is the path and filenames of all the files listed in the technical specification document as part of the codebase?
+What are the filenames of all the files listed in the technical specification document as part of the codebase (include the full path to the file from the project's root directory)?
 Do not include any other text or formatting.
 Only respond with a Python-style list containing these files."""
 

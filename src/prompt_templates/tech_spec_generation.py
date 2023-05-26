@@ -18,7 +18,6 @@ Write a technical specification document based on these requirements. The techni
             - `readme.md`
             - `requirements.txt`
             - LICENSE
-            - `project_tech_spec.md`
         - Must not include the following:
             - `.env`
             - `.gitignore`

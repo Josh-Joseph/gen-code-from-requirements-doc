@@ -1,4 +1,13 @@
-requests==2.27.1
-python-dotenv==0.19.2
-schedule==1.1.0
-PyGithub==1.55
+discord
+openai
+python-dotenv
+tiktoken
+beautifulsoup4
+google-api-python-client
+wolframalpha
+lxml
+playwright
+langchain
+fire
+joblib
+gitpython
