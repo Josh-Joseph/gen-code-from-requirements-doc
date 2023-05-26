@@ -2,7 +2,6 @@
 
 
 import os
-import yaml
 import time
 import re
 
@@ -14,7 +13,7 @@ from utils.log import log
 
 
 def prompt_to_respond_with_yaml() -> str:
-    return """Reply with only the file contents enclosed by the strings "<file contents>" and "</file contents>"."""
+    return """Reply with only the file contents directly enclosed by the strings "<file_contents>" and "</file_contents>" without any surrounding markdown code block syntax."""
 
 
 def prompt_to_reflect_and_improve(message: str, reply: str) -> str:
@@ -30,25 +29,25 @@ Your instructions:
 - If you do not have any suggested improvements to the response, only respond with the exact string `No improvements need to be made.` and nothing else.
 - If you have suggested improvements, reply with:
     - A list of the suggested improvements enclosed by the strings "<improvements>" and "</improvements>".
-    - The contents of an updated file which addresses the suggested improvements enclosed by the strings "<file contents>" and "</file contents>"."""
+    - The contents of an updated file which addresses the suggested improvements enclosed by the strings "<file_contents>" and "</file_contents>" without any surrounding markdown code block syntax."""
 
 
 def parse_single_file_contents(markdown: str) -> str:
-    pattern = r"<file contents>(.*?)</file contents>"
+    pattern = r"<file[_ ]contents>\n(.*?)</file[_ ]contents>"
     matches = re.findall(pattern, markdown, re.DOTALL)
     assert len(matches) == 1, f"Expected 1 block of file contents in the response, found {len(matches)}."
     return matches[0]
 
 
 def parse_single_file_improvements(markdown: str) -> str:
-    pattern = r"<improvements>(.*?)</improvements>"
+    pattern = r"<improvements>\n(.*?)</improvements>"
     matches = re.findall(pattern, markdown, re.DOTALL)
     assert len(matches) == 1, f"Expected 1 block of improvements in the response, found {len(matches)}."
     return matches[0]
 
 
 def serialize_file_contents(file_contents: str) -> str:
-    return f"<file contents>{file_contents}</file contents>"
+    return f"<file_contents>\n{file_contents}</file_contents>"
 
 
 def query_llm(
@@ -102,6 +101,15 @@ def query_llm(
                         f"{response.usage['total_tokens']})")
             log.debug(f"llm reply:\n{reply}")
             break
+        except openai.error.APIError as err:
+            log.warning(f"OpenAI API returned an API Error: {err}. This was attempt {attempts} of {max_request_attempts}.")
+            reply = None
+        except openai.error.APIConnectionError as err:
+            log.warning(f"Failed to connect to OpenAI API: {err}. This was attempt {attempts} of {max_request_attempts}.")
+            reply = None
+        except openai.error.RateLimitError as err:
+            log.warning(f"OpenAI API request exceeded rate limit: {err}. This was attempt {attempts} of {max_request_attempts}.")
+            reply = None
         except [openai.error.RateLimitError, openai.error.APIError] as err:
             log.warning(f"OpenAI rate limit error ({err}). This was attempt {attempts} of {max_request_attempts}.")
             reply = None

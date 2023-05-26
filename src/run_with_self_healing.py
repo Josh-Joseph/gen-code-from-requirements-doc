@@ -3,14 +3,15 @@
 
 import subprocess
 import time
+from pathlib import Path
 
 import fire
 
 from prompt_templates.information_retrieval import find_file_with_erorr_template
 from prompt_templates.code_generation import fix_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
-from utils.file_io import (load_project_requirements, load_design_document, get_project_root_folder_name,
-                           write_file, load_code_file, compute_diffs, get_main_script_name)
+from utils.file_io import (read_file, write_file, load_code_file, 
+                           compute_diffs, get_main_script_name)
 from utils.log import log
 from config import project_configs
 
@@ -48,11 +49,12 @@ def fix_code(project_name: str, max_attempts: int = 5) -> None:
         project_path: The path to the project.
         max_attempts: The maximum number of attempts to fix the code.
     """
-    project_requirements = load_project_requirements(project_configs[project_name]["requirements_document"])
-    design_document = load_design_document(project_configs[project_name]["project_path"])
+    project_requirements = read_file(Path(project_configs[project_name]["requirements_document"]))
+    design_document = read_file(
+        Path(project_configs[project_name]["project_path"]) / Path("project_design_document.md"))
     root_folder_name = project_configs[project_name]["project_path"]
     bash_script = get_main_script_name(root_folder_name)
-    subprocess.run(["chmod", "+x", f"{root_folder_name}/{bash_script}"])
+    subprocess.run(["chmod", "+x", str(Path(root_folder_name) / Path(bash_script))])
     code_errors_out = True
     attempts = 1
     while code_errors_out and attempts <= max_attempts:

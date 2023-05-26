@@ -1,16 +1,15 @@
 """Generate the file structure from the design document."""
 
 
+from pathlib import Path
 import time
-
 
 import fire
 from joblib import Parallel, delayed
 
-from prompt_templates.information_retrieval import find_project_files_to_generate_template
 from prompt_templates.code_generation import code_template
 from utils.llm import send_templated_message_to_llm
-from utils.file_io import load_project_requirements, load_design_document, write_file, get_file_paths, get_files_to_generate
+from utils.file_io import read_file, write_file, get_files_to_generate
 from config import project_configs
 
 
@@ -19,8 +18,8 @@ def process_file(fp, project_requirements, design_document, wait_seconds):
         return
     time.sleep(wait_seconds)  # Wait to prevent overloading LLM API
     message_to_send = code_template(project_requirements, design_document, fp)
-    path_and_filename, content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
-    write_file(path_and_filename, content)
+    content = send_templated_message_to_llm(message_to_send, max_improvement_iterations=3)
+    write_file(fp, content)
 
 
 def generate_code(project_name: str, n_jobs: int | None = None) -> None:
@@ -34,18 +33,18 @@ def generate_code(project_name: str, n_jobs: int | None = None) -> None:
             is spent waiting for a response from LLM, it's better. At some
             number of number of files >> number of cores this will break.
     """
-    project_requirements = load_project_requirements(project_configs[project_name]["requirements_document"])
-    design_document = load_design_document(project_configs[project_name]["project_path"])
+    project_requirements = read_file(Path(project_configs[project_name]["requirements_document"]))
+    design_document = read_file(
+        Path(project_configs[project_name]["project_path"]) / Path("project_design_document.md"))
     root_folder_name = project_configs[project_name]["project_path"]
     files_to_generate = get_files_to_generate(design_document)
-    file_paths = [f"{root_folder_name}/{file_to_generate}" for file_to_generate in files_to_generate]
 
     if n_jobs is None:
-        n_jobs = len(file_paths)
+        n_jobs = len(files_to_generate)
     # Parallel(n_jobs=n_jobs)(delayed(process_file)(
     #     fp, project_requirements, design_document, wait_seconds) 
     #     for wait_seconds, fp in enumerate(file_paths))
-    for wait_seconds, fp in enumerate(file_paths):
+    for wait_seconds, fp in enumerate(files_to_generate):
         process_file(fp, project_requirements, design_document, wait_seconds)
 
 

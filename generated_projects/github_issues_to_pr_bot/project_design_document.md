@@ -1,105 +1,150 @@
 # Project Design Document
 
 ## Table of Contents
-- [Last Updated](#last-updated)
-- [Overview](#overview)
-- [Setup and Usage](#setup-and-usage)
-- [Dependency Diagram](#dependency-diagram)
-- [File Structure](#file-structure)
-- [Logging](#logging)
-- [File Descriptions](#file-descriptions)
+
+1. [Last Updated](#last-updated)
+2. [Overview](#overview)
+3. [Setup and Usage](#setup-and-usage)
+4. [Code Organization](#code-organization)
+5. [Dependency Diagram](#dependency-diagram)
+6. [Logging](#logging)
+7. [Individual File Contents](#individual-file-contents)
 
 ## Last Updated
-2023-05-25
+
+2023-05-26
 
 ## Overview
-The purpose of this project is to create a GitHub bot that monitors a repository for new issues and automatically creates a pull request for each issue. The bot will also close the issue when the pull request is merged.
+
+The objective of this project is to create a GitHub Issues to PR Bot that monitors a GitHub repository for new issues and automatically creates a pull request for each issue. The bot will also close the issue when the pull request is merged.
 
 ## Setup and Usage
-1. Clone the repository
-2. Set the environment variable `TOKEN_FOR_GITHUB` to your GitHub token
-3. Run `<project_root>/set_up_and_run_bot.sh` to set up the virtual environment, install required packages, run tests, and start the bot
+
+The codebase's root folder is `generated_projects/github_issues_to_pr_bot`. All commands will be run from this location.
+
+To set up and run the bot, execute the following script:
+
+```bash
+./set_up_and_run_bot.sh
+```
+
+## Code Organization
+
+```
+generated_projects/github_issues_to_pr_bot
+├── src
+│   ├── __init__.py
+│   ├── bot.py
+│   └── github_api.py
+├── tests
+│   ├── test_bot.py
+│   └── test_github_api.py
+├── set_up_and_run_bot.sh
+├── requirements.txt
+├── readme.md
+├── project_design_document.md
+└── LICENSE
+```
 
 ## Dependency Diagram
+
 ```graphviz
 digraph G {
-    "set_up_and_run_bot.sh" -> "src/main.py";
-    "src/main.py" -> "src/github_api.py";
-    "src/main.py" -> "src/issue_handler.py";
+    "src/bot.py" -> "src/github_api.py";
+    "tests/test_bot.py" -> "src/bot.py";
+    "tests/test_github_api.py" -> "src/github_api.py";
     "src/github_api.py" -> "requests";
-    "src/issue_handler.py" -> "src/github_api.py";
+    "src/bot.py" -> "logging";
 }
 ```
 
-## File Structure
-```
-generated_projects/github_issues_to_pr_bot
-├── .venv
-├── LICENSE
-├── project_design_document.md
-├── readme.md
-├── requirements.txt
-├── set_up_and_run_bot.sh
-├── src
-│   ├── __init__.py
-│   ├── github_api.py
-│   └── main.py
-│   └── issue_handler.py
-└── tests
-    ├── __init__.py
-    ├── test_github_api.py
-    └── test_issue_handler.py
-```
-
 ## Logging
+
 The built-in `logging` module will be used with module-level loggers formatted as `YYYY-MM-DD HH:MM:SS | LEVEL | MESSAGE` where the datetime is in UTC. Log all new occurrences of issues and actions taken by the bot at the `INFO` level.
 
-## File Descriptions
+## Individual File Contents
 
-### set_up_and_run_bot.sh
-This bash script sets up the virtual environment, installs required packages, runs tests, and starts the bot.
-- Environment Variables:
-  - TOKEN_FOR_GITHUB
+### src/bot.py
 
-### src/main.py
-The main entry point for the bot. It initializes the bot and runs it indefinitely.
-- Functions:
-  - def main() -> None:
-    - Description: The main function that initializes and runs the bot.
-- Environment Variables:
-  - TOKEN_FOR_GITHUB
+This file contains the main logic for the GitHub Issues to PR Bot.
+
+- `class GitHubIssuesToPRBot:`
+    - `def __init__(self, github_api: GitHubAPI, repo: str, polling_interval: int = 10) -> None:`
+        - Initializes the bot with a GitHubAPI instance, the repository to monitor, and the polling interval.
+    - `def run(self) -> None:`
+        - Runs the bot indefinitely, checking for new issues and creating pull requests for them.
+
+- `def main() -> None:`
+    - Sets up the logger, reads the GitHub token from the environment variable `TOKEN_FOR_GITHUB`, initializes the bot, and runs it.
+    - Third-party Python packages used: None
+    - Environment variables used: `TOKEN_FOR_GITHUB`
 
 ### src/github_api.py
-This module contains functions for interacting with the GitHub API.
-- Third-party packages:
-  - requests
-- Functions:
-  - def get_issues(repo: str, token: str) -> List[Dict[str, Any]]:
-    - Description: Retrieves a list of open issues from the specified repository.
-    - Example: get_issues("Josh-Joseph/github-actions-bot-test", "your_token") -> [{"id": 1, "title": "Issue 1", ...}, ...]
-  - def create_pull_request(repo: str, issue: Dict[str, Any], token: str) -> Dict[str, Any]:
-    - Description: Creates a pull request for the specified issue in the repository.
-    - Example: create_pull_request("Josh-Joseph/github-actions-bot-test", {"id": 1, "title": "Issue 1", ...}, "your_token") -> {"id": 1, "title": "Issue 1", ...}
-  - def close_issue(repo: str, issue_id: int, token: str) -> None:
-    - Description: Closes the specified issue in the repository.
-- Environment Variables:
-  - TOKEN_FOR_GITHUB
 
-### src/issue_handler.py
-This module contains the IssueHandler class that handles issue processing and pull request creation.
-- Classes:
-  - class IssueHandler:
-    - Description: A class that handles issue processing and pull request creation.
-    - Methods:
-      - def __init__(self, repo: str, token: str) -> None:
-        - Description: Initializes the IssueHandler with the specified repository and token.
-      - def process_issues(self) -> None:
-        - Description: Processes open issues and creates pull requests for them.
-- Environment Variables:
-  - TOKEN_FOR_GITHUB
+This file contains the GitHubAPI class that interacts with the GitHub API.
+
+- `class GitHubAPI:`
+    - `def __init__(self, token: str) -> None:`
+        - Initializes the GitHubAPI instance with the provided token.
+    - `def get_open_issues(self, repo: str) -> List[Dict[str, Any]]:`
+        - Retrieves a list of open issues for the specified repository.
+        - Example input-output pair: `("Josh-Joseph/github-actions-bot-test") -> [{"number": 1, "title": "Issue 1", "body": "Issue 1 description"}]`
+    - `def create_pull_request(self, repo: str, issue: Dict[str, Any]) -> Dict[str, Any]:`
+        - Creates a pull request for the given issue in the specified repository.
+        - Example input-output pair: `("Josh-Joseph/github-actions-bot-test", {"number": 1, "title": "Issue 1", "body": "Issue 1 description"}) -> {"number": 2, "title": "Issue 1", "body": "Issue 1 description\n\nCloses #1"}`
+    - `def close_issue(self, repo: str, issue_number: int) -> None:`
+        - Closes the issue with the given issue number in the specified repository.
+        - Example input-output pair: `("Josh-Joseph/github-actions-bot-test", 1) -> None`
+    - `def add_issue_comment(self, repo: str, issue_number: int, comment: str) -> None:`
+        - Adds a comment to the issue with the given issue number in the specified repository.
+        - Example input-output pair: `("Josh-Joseph/github-actions-bot-test", 1, "This issue has been resolved by PR #2.") -> None`
+    - Third-party Python packages used: `requests`
+    - Environment variables used: None
+
+### tests/test_bot.py
+
+This file contains tests for the `src/bot.py` file.
+
+- `def test_github_issues_to_pr_bot_initialization():`
+    - Tests the initialization of the GitHubIssuesToPRBot class.
+- `def test_github_issues_to_pr_bot_run():`
+    - Tests the `run` method of the GitHubIssuesToPRBot class.
+- Third-party Python packages used: None
+- Environment variables used: None
 
 ### tests/test_github_api.py
-This file contains tests for the `github_api.py` module.
 
-### tests/test_issue_handler.py
-This file contains tests for the `issue_handler.py` module.
+This file contains tests for the `src/github_api.py` file.
+
+- `def test_github_api_initialization():`
+    - Tests the initialization of the GitHubAPI class.
+- `def test_get_open_issues():`
+    - Tests the `get_open_issues` method of the GitHubAPI class.
+- `def test_create_pull_request():`
+    - Tests the `create_pull_request` method of the GitHubAPI class.
+- `def test_close_issue():`
+    - Tests the `close_issue` method of the GitHubAPI class.
+- `def test_add_issue_comment():`
+    - Tests the `add_issue_comment` method of the GitHubAPI class.
+- Third-party Python packages used: None
+- Environment variables used: None
+
+### set_up_and_run_bot.sh
+
+This bash script sets up the virtual environment, installs the required packages, runs the tests, and starts the bot.
+
+### requirements.txt
+
+This file lists the required Python packages for the project.
+
+### readme.md
+
+This file contains an overview of the project, setup and usage instructions, and a link to the project design document.
+
+### project_design_document.md
+
+This file contains the project design document.
+
+### LICENSE
+
+This file contains the MIT license for the project.

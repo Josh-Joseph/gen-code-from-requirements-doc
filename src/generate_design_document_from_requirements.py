@@ -3,7 +3,6 @@
 
 from pathlib import Path
 
-
 import fire
 
 from prompt_templates.design_doc_generation import design_document_template
