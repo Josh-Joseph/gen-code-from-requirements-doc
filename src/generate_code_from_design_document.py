@@ -36,14 +36,13 @@ def generate_code(project_name: str, n_jobs: int | None = None) -> None:
     project_requirements = read_file(Path(project_configs[project_name]["requirements_document"]))
     design_document = read_file(
         Path(project_configs[project_name]["project_path"]) / Path("project_design_document.md"))
-    root_folder_name = project_configs[project_name]["project_path"]
     files_to_generate = get_files_to_generate(design_document)
 
     if n_jobs is None:
         n_jobs = len(files_to_generate)
     # Parallel(n_jobs=n_jobs)(delayed(process_file)(
-    #     fp, project_requirements, design_document, wait_seconds) 
-    #     for wait_seconds, fp in enumerate(file_paths))
+    #     fp, project_requirements, design_document, 5 * wait_seconds) 
+    #     for wait_seconds, fp in enumerate(files_to_generate))
     for wait_seconds, fp in enumerate(files_to_generate):
         process_file(fp, project_requirements, design_document, wait_seconds)
 

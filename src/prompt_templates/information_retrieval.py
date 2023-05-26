@@ -45,7 +45,7 @@ When the codebase is run, this is stderr:
 {stderr}
 
 What file is causing the script to not as desired?
-Only respond with the filename (including its path).
+Only respond with the path (including the codebases's root folder) and filename.
 Do not include any other text or formatting."""
 
 

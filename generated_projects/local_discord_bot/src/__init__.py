@@ -1,1 +1,1 @@
-"""Empty __init__.py file for the src package."""
+"""This file allows the src directory to be treated as a Python package."""

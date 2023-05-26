@@ -10,8 +10,7 @@ import fire
 from prompt_templates.information_retrieval import find_file_with_erorr_template
 from prompt_templates.code_generation import fix_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
-from utils.file_io import (read_file, write_file, load_code_file, 
-                           compute_diffs, get_main_script_name)
+from utils.file_io import read_file, write_file, compute_diffs, get_main_script_name
 from utils.log import log
 from config import project_configs
 
@@ -42,7 +41,7 @@ def run_script_inside_subprocess_with_timeout(
     return stdout, stderr
 
 
-def fix_code(project_name: str, max_attempts: int = 5) -> None:
+def fix_code(project_name: str, max_attempts: int = 25) -> None:
     """Fix the code for the project.
     
     Args:
@@ -67,17 +66,13 @@ def fix_code(project_name: str, max_attempts: int = 5) -> None:
         else:
             log.debug(f"stdout: {stdout}")
             log.debug(f"stderr: {stderr}")
-            message_to_send = find_file_with_erorr_template(
-                design_document, stdout, stderr)
-            reply = query_llm(message_to_send)
-            code = load_code_file(root_folder_name, reply)
-            message_to_send = fix_code_template(
-                project_requirements, design_document, reply, code, stderr)
-            path_and_filename, content = send_templated_message_to_llm(
-                message_to_send)
+            message_to_send = find_file_with_erorr_template(design_document, stdout, stderr)
+            path_and_file_name = query_llm(message_to_send)
+            code = read_file(path_and_file_name)
+            message_to_send = fix_code_template(project_requirements, design_document, path_and_file_name, code, stderr)
+            content = send_templated_message_to_llm(message_to_send)
             log.info(compute_diffs(code, content))
-            write_file(
-                f"{root_folder_name}/{path_and_filename}", content)
+            write_file(path_and_file_name, content)
             attempts += 1
 
 
