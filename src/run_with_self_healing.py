@@ -41,22 +41,28 @@ def run_script_inside_subprocess_with_timeout(
     return stdout, stderr
 
 
-def fix_code(project_name: str, max_attempts: int = 25) -> None:
+def fix_code(
+    project_name: str, 
+    max_fix_attempts: int = 25, 
+    max_improvement_iterations_per_llm_query: int = 3
+) -> None:
     """Fix the code for the project.
     
     Args:
         project_path: The path to the project.
-        max_attempts: The maximum number of attempts to fix the code.
+        max_fix_attempts: The maximum number of attempts to fix the code.
+        max_improvement_iterations_per_llm_query: 
+            The maximum number of improvement iterations per LLM query.
     """
     project_requirements = read_file(Path(project_configs[project_name]["requirements_document"]))
-    design_document = read_file(
-        Path(project_configs[project_name]["project_path"]) / Path("project_design_document.md"))
+    tech_spec = read_file(
+        Path(project_configs[project_name]["project_path"]) / Path("technical_specification.md"))
     root_folder_name = project_configs[project_name]["project_path"]
     bash_script = get_main_script_name(root_folder_name)
     subprocess.run(["chmod", "+x", str(Path(root_folder_name) / Path(bash_script))])
     code_errors_out = True
     attempts = 1
-    while code_errors_out and attempts <= max_attempts:
+    while code_errors_out and attempts <= max_fix_attempts:
         stdout, stderr = run_script_inside_subprocess_with_timeout(
             root_folder_name, bash_script)
 
@@ -66,11 +72,13 @@ def fix_code(project_name: str, max_attempts: int = 25) -> None:
         else:
             log.debug(f"stdout: {stdout}")
             log.debug(f"stderr: {stderr}")
-            message_to_send = find_file_with_erorr_template(design_document, stdout, stderr)
+            message_to_send = find_file_with_erorr_template(tech_spec, stdout, stderr)
             path_and_file_name = query_llm(message_to_send)
             code = read_file(path_and_file_name)
-            message_to_send = fix_code_template(project_requirements, design_document, path_and_file_name, code, stderr)
-            content = send_templated_message_to_llm(message_to_send)
+            message_to_send = fix_code_template(
+                project_requirements, tech_spec, path_and_file_name, code, stderr)
+            content = send_templated_message_to_llm(
+                message_to_send, max_improvement_iterations_per_llm_query)
             log.info(compute_diffs(code, content))
             write_file(path_and_file_name, content)
             attempts += 1

@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Dict, Any
@@ -18,10 +19,13 @@ class GitHubIssuesToPRBot:
             open_issues = self.github_api.get_open_issues(self.repo)
             for issue in open_issues:
                 pr = self.github_api.create_pull_request(self.repo, issue)
-                logging.info(f"Created PR for issue #{issue['number']}: {pr['html_url']}")
-                self.github_api.add_issue_comment(self.repo, issue['number'], f"Resolved by PR #{pr['number']}: {pr['html_url']}")
-                self.github_api.close_issue(self.repo, issue['number'])
-                logging.info(f"Closed issue #{issue['number']}")
+                if pr:
+                    logging.info(f"Created PR for issue #{issue['number']}: {pr['html_url']}")
+                    self.github_api.add_issue_comment(self.repo, issue['number'], f"Resolved by PR #{pr['number']}: {pr['html_url']}")
+                    self.github_api.close_issue(self.repo, issue['number'])
+                    logging.info(f"Closed issue #{issue['number']}")
+                else:
+                    logging.warning(f"Failed to create PR for issue #{issue['number']}")
 
             time.sleep(self.polling_interval)
 
@@ -29,7 +33,10 @@ class GitHubIssuesToPRBot:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
-    token = Path("TOKEN_FOR_GITHUB").read_text().strip()
+    token = os.environ.get("TOKEN_FOR_GITHUB")
+    if not token:
+        raise ValueError("TOKEN_FOR_GITHUB environment variable not found")
+
     github_api = GitHubAPI(token)
     repo = "Josh-Joseph/github-actions-bot-test"
 
@@ -39,4 +46,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

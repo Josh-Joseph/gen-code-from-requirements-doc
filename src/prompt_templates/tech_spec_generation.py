@@ -1,10 +1,10 @@
-def design_document_template(project_requirements, file_path):
+def tech_spec_document_template(project_requirements, file_path):
     return f"""These are the requirements for the codebase:
 ```markdown
 {project_requirements}
 ```
 
-Write a design document based on these requirements. The design document must:
+Write a technical specification document based on these requirements. The technical specification document must:
 - Have the following sections:
     - A table of contents
     - Last updated date
@@ -17,7 +17,7 @@ Write a design document based on these requirements. The design document must:
             - `readme.md`
             - `requirements.txt`
             - LICENSE
-            - `project_design_document.md`
+            - `project_tech_spec.md`
         - Must not include the following:
             - `.env`
             - `.gitignore`
@@ -47,4 +47,4 @@ Write a design document based on these requirements. The design document must:
                 - A list of third-party Python packages that will be used in the file, if any are used.
                 - A list of environment variables the file will use, if any are used.
 
-Only create the design markdown document. Do not generate any of the specific code files."""
+Only create the technical specification markdown document. Do not generate any of the specific code files."""

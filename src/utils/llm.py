@@ -58,7 +58,17 @@ def query_llm(
         stream_response: bool = False,
         tokens_per_log_msg: int = 100
     ) -> str | None:
-    """Send the system message and design message to OpenAI and return the reply."""
+    """Send the a message to OpenAI and return the reply (with retries).
+    
+    Args:
+        message: The message to send to OpenAI.
+        max_request_attempts: The maximum number of attempts to make to send the request to OpenAI.
+        openai_model: The OpenAI model to use.
+        stream_response: Whether to stream the response from OpenAI.
+        tokens_per_log_msg: The number of tokens to recieve before logging a message.
+        
+    Returns:
+        The reply from OpenAI. If the request (including retries) fails, returns None."""
     openai.api_key = os.getenv("OPENAI_KEY")
 
     openai_model_max_tokens = 2048
@@ -74,8 +84,9 @@ def query_llm(
         "max_tokens": openai_model_max_tokens,
         "temperature": 0
     }
+    reply = None
     attempts = 1
-    while attempts < max_request_attempts:
+    while reply is None and attempts <= max_request_attempts:
         try:
             response = openai.ChatCompletion.create(stream=stream_response, **params)
             if stream_response:
@@ -100,24 +111,27 @@ def query_llm(
                         f"{response.usage['completion_tokens']}, "
                         f"{response.usage['total_tokens']})")
             log.debug(f"llm reply:\n{reply}")
-            break
         except openai.error.APIError as err:
             log.warning(f"OpenAI API returned an API Error: {err}. This was attempt {attempts} of {max_request_attempts}.")
-            reply = None
         except openai.error.APIConnectionError as err:
             log.warning(f"Failed to connect to OpenAI API: {err}. This was attempt {attempts} of {max_request_attempts}.")
-            reply = None
         except openai.error.RateLimitError as err:
             log.warning(f"OpenAI API request exceeded rate limit: {err}. This was attempt {attempts} of {max_request_attempts}.")
-            reply = None
-        except [openai.error.RateLimitError, openai.error.APIError] as err:
-            log.warning(f"OpenAI rate limit error ({err}). This was attempt {attempts} of {max_request_attempts}.")
-            reply = None
         attempts += 1
     return reply
 
 
-def send_templated_message_to_llm(message: str, max_improvement_iterations: int = 0) -> tuple[str, str]:
+def send_templated_message_to_llm(message: str, max_improvement_iterations: int = 0) -> str:
+    """Send a templated message to LLM and return the reply (with improvements).
+    
+    Args:
+        message: The message to send to LLM.
+        max_improvement_iterations: 
+            The maximum number of times to attempt to improve the LLM's reply.
+        
+    Returns:
+        The reply from LLM (with improvements)."""
+
     # Anecdotally, sending the system message as the system message (as opposed to just
     # including it in the user message) seems to work better.
     system_message = system_message_template()
@@ -130,7 +144,9 @@ def send_templated_message_to_llm(message: str, max_improvement_iterations: int 
     while needs_improvement and improvement_iters <= max_improvement_iterations:
         log.debug(f"Reflective improvement attempt {improvement_iters} of {max_improvement_iterations}")
         reply_without_improvements = serialize_file_contents(parsed_file_contents)
-        reflection_instruction = f"{system_message}\n{prompt_to_reflect_and_improve(original_instructions, reply_without_improvements)}"
+        reflection_instruction = (
+            f"{system_message}\n"
+            f"{prompt_to_reflect_and_improve(original_instructions, reply_without_improvements)}")
         reply = query_llm(f"{system_message}\n{reflection_instruction}")
         if "No improvements need to be made." in reply:
             log.info("No improvements need to be made.")

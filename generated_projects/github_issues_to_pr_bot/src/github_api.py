@@ -18,13 +18,17 @@ class GitHubAPI:
 
     def create_pull_request(self, repo: str, issue: Dict[str, Any]) -> Dict[str, Any]:
         url = f"https://api.github.com/repos/{repo}/pulls"
+        branch_name = f"issue-{issue['number']}"
         data = {
             "title": issue["title"],
             "body": f"{issue['body']}\n\nCloses #{issue['number']}",
-            "head": "main",
+            "head": branch_name,
             "base": "main",
         }
         response = requests.post(url, json=data, headers=self.headers)
+        if response.status_code == 422:
+            logging.warning(f"Failed to create pull request for issue {issue['number']}: {response.json()['message']}")
+            return None
         response.raise_for_status()
         pr = response.json()
         return {"number": pr["number"], "title": pr["title"], "body": pr["body"]}
@@ -40,3 +44,4 @@ class GitHubAPI:
         data = {"body": comment}
         response = requests.post(url, json=data, headers=self.headers)
         response.raise_for_status()
+

@@ -10,3 +10,4 @@ playwright
 langchain
 fire
 joblib
+gitpython

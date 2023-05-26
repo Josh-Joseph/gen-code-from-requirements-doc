@@ -79,11 +79,3 @@ def compute_diffs(original: str, modified: str) -> str:
         fromfile='Original',
         tofile='Modified')
     return '\n'.join(diff)
-
-
-def get_file_paths(directory: str) -> list[str]:
-    file_paths = []
-    for filepath in Path(directory).rglob('*'):
-        if filepath.is_file():
-            file_paths.append(str(filepath))
-    return file_paths
