@@ -7,7 +7,7 @@ from pathlib import Path
 
 import fire
 
-from prompt_templates.information_retrieval import find_file_with_erorr_template
+from prompt_templates.information_retrieval import find_file_with_error_template
 from prompt_templates.code_generation import fix_code_template
 from utils.llm import send_templated_message_to_llm, query_llm
 from utils.file_io import read_file, write_file, compute_diffs, get_main_script_name
@@ -68,20 +68,25 @@ def run_with_self_healing_code(
 
         if stderr is None:
             code_errors_out = False
-            log.debug("Script ran successfully.")
+            log.info("Script ran successfully.")
         else:
             log.debug(f"Output from stdout: {stdout}")
             log.debug(f"Output from stderr: {stderr}")
-            message_to_send = find_file_with_erorr_template(tech_spec, stdout, stderr)
-            path_and_file_name = query_llm(message_to_send)
-            code = read_file(path_and_file_name)
-            message_to_send = fix_code_template(
-                project_requirements, tech_spec, path_and_file_name, code, stderr)
-            content = send_templated_message_to_llm(
-                message_to_send, max_improvement_iterations_per_llm_query)
-            log.info(compute_diffs(code, content))
-            write_file(path_and_file_name, content)
-            attempts += 1
+            message_to_send = find_file_with_error_template(tech_spec, stdout, stderr)
+            reply = query_llm(message_to_send)
+            if reply == "There is no error.":
+                code_errors_out = False
+                log.info("Script ran successfully.")
+            else:
+                path_and_file_name = reply
+                code = read_file(path_and_file_name)
+                message_to_send = fix_code_template(
+                    project_requirements, tech_spec, path_and_file_name, code, stderr)
+                content = send_templated_message_to_llm(
+                    message_to_send, max_improvement_iterations_per_llm_query)
+                log.info(compute_diffs(code, content))
+                write_file(path_and_file_name, content)
+                attempts += 1
 
 
 if __name__ == "__main__":

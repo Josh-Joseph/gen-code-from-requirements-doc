@@ -40,7 +40,9 @@ As a first silly test - a discord bot that runs locally counts characters of mes
 
 While it's super simple, it's amazing it actually works!
 
-An example of something unexpected I had to manually dig into: I added the "Ensure that you have set `intents.message_content = True`" in the discord bot's requirements document to fix a bug that neither improve code or fix code finds so I just .. added it to the requirements but that doesn't seem like the right place for it.
+![discord_bot](images/discord_bot.PNG)
+
+Something interesting that came up: I added the "Ensure that you have set `intents.message_content = True`" in the discord bot's requirements document to fix a bug that neither improve code or fix code finds so I just .. added it to the requirements but that doesn't seem like the right place for it.
 
 ### GitHub Issues to PR Bot
 As a second test - a bot which monitors a github repo for issues and automatically creates a PR linked to it and closes the issue when the PR is closed.
@@ -54,8 +56,15 @@ An example of something unexpected I had to manually dig into: I added the instr
 ### JAX-based Classifier for the IRIS Dataset
 As a third test - although still super simple but much more in the direction of my desired use case - using it to generate ML code. This was a fun example too to see how it manages downloading data, splitting it into train/test, defining a model, and training it.
 
-***************************************** TODO FINISH THIS ONCE CODE WORKS !!!! *****************************************
+![discord_bot](images/jax_script_success.PNG)
 
+Seems good. Granted I imagine there are _many_ examples of creating classifiers using the IRIS dataset on the internet so it's not all that shocking it did well. But still _super_ cool.
+
+Something interesting that came up: The first two bots were designed to run forever so when I was first running this script it (correctly) exited when it finished but `run_with_self_healing.py` (as it was at the time) interpreted the process ending as an error occurring. When it then sent the stderr to GPT-4 (to "heal" itself), the code threw this error:
+
+![discord_bot](images/jax_script_error.PNG)
+
+Really fun to see it look for a directory named "There is no error to fix in the codebase. The messages in stderr are warnings, not errors."
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs some love.

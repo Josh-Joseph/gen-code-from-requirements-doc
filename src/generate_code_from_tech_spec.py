@@ -33,7 +33,7 @@ def process_file(
 def generate_code(
     project_name: str,
     max_improvement_iterations_per_llm_query: int = 3,
-    n_jobs: int | None = None
+    n_jobs: int = -1
 ) -> None:
     """Generate the code for a technical specification.
 
@@ -41,11 +41,7 @@ def generate_code(
         project_path: The path to the project.
         max_improvement_iterations_per_llm_query: 
             The maximum number of improvement iterations per LLM query.
-        n_jobs: The number of jobs to run in parallel. If None, then the number of 
-            jobs is set to the number of files. Note it's more common to set it to 
-            the number of cores on your machine but since the majority of the time
-            is spent waiting for a response from LLM, it's better. At some
-            number of number of files > number of cores this will break.
+        n_jobs: The number of jobs to run in parallel. If -1, use all available cores.
     """
     project_requirements = read_file(
         Path(project_configs[project_name]["requirements_document"]))
@@ -58,12 +54,11 @@ def generate_code(
     Parallel(n_jobs=n_jobs)(delayed(process_file)(
         fp, project_requirements,
         tech_spec,
-        5 * wait_seconds,
+        5 * i,  # stagger request a bit to not overload the API
         max_improvement_iterations_per_llm_query)
-        for wait_seconds, fp in enumerate(files_to_generate))
-    # for wait_seconds, fp in enumerate(files_to_generate):
-    #     process_file(fp, project_requirements, tech_spec, wait_seconds,
-    #                  max_improvement_iterations=max_improvement_iterations_per_llm_query)
+        for i, fp in enumerate(files_to_generate))
+    # for fp in files_to_generate:
+        # process_file(fp, project_requirements, tech_spec, 0, max_improvement_iterations_per_llm_query)
 
 
 if __name__ == "__main__":

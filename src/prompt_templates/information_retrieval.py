@@ -32,7 +32,7 @@ Do not include any other text or formatting.
 Only respond with a Python-style list containing these files."""
 
 
-def find_file_with_erorr_template(tech_spec, stdout, stderr):
+def find_file_with_error_template(tech_spec, stdout, stderr):
     return f"""Given the following technical specification document:
 ```markdown
 {tech_spec}
@@ -46,4 +46,5 @@ When the codebase is run, this is stderr:
 
 What file should be edited in order to fix the error?
 Only respond with the path (including the codebases's root folder) and filename.
-Do not include any other text or formatting."""
+Do not include any other text or formatting.
+If there is no error, respond only with the exact string "There is no error."."""

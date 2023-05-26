@@ -56,7 +56,7 @@ def query_llm(
         max_request_attempts: int = 5,
         # openai_model: str = "gpt-3.5-turbo",
         openai_model: str = "gpt-4-0314",
-        stream_response: bool = True,
+        stream_response: bool = False,
         tokens_per_log_msg: int = 100
     ) -> str | None:
     """Send the a message to OpenAI and return the reply (with retries).
@@ -121,6 +121,10 @@ def query_llm(
             log.warning(f"OpenAI API request exceeded rate limit: {err}. This was attempt {attempts} of {max_request_attempts}.")
         except openai.error.Timeout as err:
             log.warning(f"OpenAI API request timed out: {err}. This was attempt {attempts} of {max_request_attempts}.")
+        except openai.error.RateLimitError as err:
+            log.warning(f"OpenAI API rate limit hit: {err}. This was attempt {attempts} of {max_request_attempts}.")
+            log.warning("Sleeping for 60 seconds...")
+            time.sleep(60)
         except requests.exceptions.ChunkedEncodingError as err:
             log.warning(f"OpenAI API request errored out: {err}. This was attempt {attempts} of {max_request_attempts}.")
         attempts += 1
