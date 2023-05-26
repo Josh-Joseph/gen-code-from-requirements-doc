@@ -40,12 +40,22 @@ As a first silly test - a discord bot that runs locally counts characters of mes
 
 While it's super simple, it's amazing it actually works!
 
+An example of something unexpected I had to manually dig into: I added the "Ensure that you have set `intents.message_content = True`" in the discord bot's requirements document to fix a bug that neither improve code or fix code finds so I just .. added it to the requirements but that doesn't seem like the right place for it.
+
 ### GitHub Issues to PR Bot
 As a second test - a bot which monitors a github repo for issues and automatically creates a PR linked to it and closes the issue when the PR is closed.
 
 This code will actually be used in my next attempt at this (see the "Ideas for the next iteration" section).
 
+An example of something unexpected I had to manually dig into: I added the instruction to the requirements document to create a new branch before creating the PR since the bot didn't do that on its own (and without a branch created first, PR creation errors out).
+
 ***************************************** TODO FINISH THIS ONCE CODE WORKS !!!! *****************************************
+
+### JAX-based Classifier for the IRIS Dataset
+As a third test - although still super simple but much more in the direction of my desired use case - using it to generate ML code. This was a fun example too to see how it manages downloading data, splitting it into train/test, defining a model, and training it.
+
+***************************************** TODO FINISH THIS ONCE CODE WORKS !!!! *****************************************
+
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs some love.
@@ -54,7 +64,7 @@ This code will actually be used in my next attempt at this (see the "Ideas for t
 
 ## Takeaways
 - Generally this seems super promising. Check out the generated technical specification documents and code! Not bad. Definitely did better than I thought but we are _not_ quite there yet, at least going about it as this repo is structured.
-- Specifying what I want in a requirements file and then using a technical specification document as an intermediate step was great. It seems like for the forseeable future a middle step (or two!) between "me writing what I want" and "generate code" that GPT-4 generates seems extremely helpful (both for human-interpretable debugging and producing higher quality code). For example, the "Ensure that you have set `intents.message_content = True`" in the requirements document is just a bug that neither improve code or fix code finds so I just .. had to add it to the requirements but that doesn't seem like the right place for it.
+- Specifying what I want in a requirements file and then using a technical specification document as an intermediate step was great. It seems like for the forseeable future a middle step (or two!) between "me writing what I want" and "generate code" that GPT-4 generates seems extremely helpful (both for human-interpretable debugging and producing higher quality code).
 - There's definitely some being mindful about what the LLM needs to generate functional code and explicitly stating that should appear in the technical specification document (e.g., environment variables, logging).
 - Having the LLM iteratively reflect on its response and improve the response seemed to be super helpful. So helpful that I just built it into how I send messages to GPT-4 (see `utils/llm.py`).
 - Generating code from one-forward-pass is far too hard. Getting the requirements doc + prompts right definitely took a couple dozen iterations. I think this needs to be an iterative process (with a human in the loop). And "iterating" by editing requirements and/or prompts and re-running makes it too hard to capture the changes.

@@ -6,7 +6,15 @@ The purpose of this script is to train and test a feed-forward neural network cl
 
 ## Functional Requirements
 
-- The bot will be run with `<project_root>/set_up_and_run_bot.sh`
+- The classifier must be run as a bash script `<project_root>/set_up_and_run.sh` that does the following:
+  - Creates a python virtual environment at `<project_root>/.venv`
+  - Installs all of the necessary requirements into the virtual environment
+  - Enters the virtual environment
+  - Downloads the data
+  - Splits the data into train and test sets
+  - Trains the classifier
+  - Tests the classifier
+  - Exits the virtual environment
 - Download the IRIS dataset
 - Split the dataset into training and testing sets where the test set is the last 2 data points from each class
 - Train a feed-forward neural network classifier using JAX

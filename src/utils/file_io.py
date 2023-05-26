@@ -28,7 +28,7 @@ def write_file(path_and_filename: str, content: str) -> None:
 
 
 def get_project_root_folder_name(project_path: str) -> str:
-    """Get the project root folder name by looking it up in the design document.
+    """Get the project root folder name by looking it up in the technical specification document.
     
     Args:
         project_path: The path to the project.
@@ -36,14 +36,14 @@ def get_project_root_folder_name(project_path: str) -> str:
     Returns:
         The project root folder name.
     """
-    design_document = read_file(Path(project_path) / Path("project_design_document.md"))
-    message_to_send = find_project_root_directory_name_template(design_document)
+    tech_spec = read_file(Path(project_path) / Path("technical_specification.md"))
+    message_to_send = find_project_root_directory_name_template(tech_spec)
     reply = query_llm(message_to_send)
     return reply
 
 
 def get_main_script_name(project_path: str) -> str:
-    """Get the main script name by looking it up in the design document.
+    """Get the main script name by looking it up in the technical specification document.
 
     Args:
         project_path: The path to the project.
@@ -51,14 +51,14 @@ def get_main_script_name(project_path: str) -> str:
     Returns:
         The main script name.
     """
-    design_document = read_file(Path(project_path) / Path("project_design_document.md"))
-    message_to_send = find_project_main_script_name_template(design_document)
+    tech_spec = read_file(Path(project_path) / Path("technical_specification.md"))
+    message_to_send = find_project_main_script_name_template(tech_spec)
     reply = query_llm(message_to_send)
     return reply
 
 
-def get_files_to_generate(design_document: str) -> list[str]:
-    message_to_send = find_project_files_to_generate_template(design_document)
+def get_files_to_generate(tech_spec: str) -> list[str]:
+    message_to_send = find_project_files_to_generate_template(tech_spec)
     reply = query_llm(message_to_send)
     return eval(reply)
 

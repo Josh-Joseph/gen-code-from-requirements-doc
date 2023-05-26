@@ -5,6 +5,7 @@ import os
 import time
 import re
 
+import requests
 import tiktoken
 import openai
 
@@ -51,11 +52,11 @@ def serialize_file_contents(file_contents: str) -> str:
 
 
 def query_llm(
-        message: str, 
-        max_request_attempts: int = 3,
+        message: str,
+        max_request_attempts: int = 5,
         # openai_model: str = "gpt-3.5-turbo",
-        openai_model: str = "gpt-4-0314", 
-        stream_response: bool = False,
+        openai_model: str = "gpt-4-0314",
+        stream_response: bool = True,
         tokens_per_log_msg: int = 100
     ) -> str | None:
     """Send the a message to OpenAI and return the reply (with retries).
@@ -92,17 +93,18 @@ def query_llm(
             if stream_response:
                 total_tokens_recieved_so_far = 0
                 last_log_msg_token_count = 0
-                reply = ""
+                streamed_reply = ""
                 request_start_time = time.time()
                 for chunk in response:
                     content = chunk["choices"][0].get("delta", {}).get("content")
                     if content is not None:
-                        reply += content
+                        streamed_reply += content
                         total_tokens_recieved_so_far += len(encoding.encode(content))
                         if total_tokens_recieved_so_far - last_log_msg_token_count >= tokens_per_log_msg:
                             log.debug(f"Recieving response... (total tokens recieved so far: {total_tokens_recieved_so_far}; "
                                     f"total elapsed time: {time.time() - request_start_time:.2f} seconds)")
                             last_log_msg_token_count = total_tokens_recieved_so_far
+                reply = streamed_reply  # set this last, incase the API errors out mid-reply
             else:
                 reply = response.choices[0]["message"]["content"]
                 log.info(f"Response time: {response.response_ms / 1000. / 60.:.2f} minutes")
@@ -117,7 +119,13 @@ def query_llm(
             log.warning(f"Failed to connect to OpenAI API: {err}. This was attempt {attempts} of {max_request_attempts}.")
         except openai.error.RateLimitError as err:
             log.warning(f"OpenAI API request exceeded rate limit: {err}. This was attempt {attempts} of {max_request_attempts}.")
+        except openai.error.Timeout as err:
+            log.warning(f"OpenAI API request timed out: {err}. This was attempt {attempts} of {max_request_attempts}.")
+        except requests.exceptions.ChunkedEncodingError as err:
+            log.warning(f"OpenAI API request errored out: {err}. This was attempt {attempts} of {max_request_attempts}.")
         attempts += 1
+    if reply is None:
+        raise ValueError(f"Failed to get a reply from OpenAI after {max_request_attempts} attempts.")
     return reply
 
 

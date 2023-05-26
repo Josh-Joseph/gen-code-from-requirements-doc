@@ -33,7 +33,7 @@ def process_file(
 def generate_code(
     project_name: str,
     max_improvement_iterations_per_llm_query: int = 3,
-    n_jobs: int | None = 1
+    n_jobs: int | None = None
 ) -> None:
     """Generate the code for a technical specification.
 
@@ -62,8 +62,8 @@ def generate_code(
         max_improvement_iterations_per_llm_query)
         for wait_seconds, fp in enumerate(files_to_generate))
     # for wait_seconds, fp in enumerate(files_to_generate):
-    # process_file(fp, project_requirements, tech_spec, wait_seconds,
-    #              max_improvement_iterations=max_improvement_iterations_per_llm_query)
+    #     process_file(fp, project_requirements, tech_spec, wait_seconds,
+    #                  max_improvement_iterations=max_improvement_iterations_per_llm_query)
 
 
 if __name__ == "__main__":

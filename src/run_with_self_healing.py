@@ -1,4 +1,4 @@
-"""Fix the code for the project."""
+"""Run the code with self-healing."""
 
 
 import subprocess
@@ -22,9 +22,9 @@ def run_script_inside_subprocess_with_timeout(
 ) -> tuple[str | None, str | None]:
     """Run the script inside a subprocess with a timeout."""
     start = time.time()
-    process = subprocess.Popen([f"./{bash_script}"], 
+    process = subprocess.Popen([f"./{bash_script}"],
                                cwd=root_folder_name,
-                               stdout=subprocess.PIPE, 
+                               stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
     while True:
         if process.poll() is not None:  # If the process has finished
@@ -41,12 +41,12 @@ def run_script_inside_subprocess_with_timeout(
     return stdout, stderr
 
 
-def fix_code(
-    project_name: str, 
-    max_fix_attempts: int = 25, 
+def run_with_self_healing_code(
+    project_name: str,
+    max_heal_attempts: int = 25,
     max_improvement_iterations_per_llm_query: int = 3
 ) -> None:
-    """Fix the code for the project.
+    """Run the code with self-healing.
     
     Args:
         project_path: The path to the project.
@@ -62,7 +62,7 @@ def fix_code(
     subprocess.run(["chmod", "+x", str(Path(root_folder_name) / Path(bash_script))])
     code_errors_out = True
     attempts = 1
-    while code_errors_out and attempts <= max_fix_attempts:
+    while code_errors_out and attempts <= max_heal_attempts:
         stdout, stderr = run_script_inside_subprocess_with_timeout(
             root_folder_name, bash_script)
 
@@ -70,8 +70,8 @@ def fix_code(
             code_errors_out = False
             log.debug("Script ran successfully.")
         else:
-            log.debug(f"stdout: {stdout}")
-            log.debug(f"stderr: {stderr}")
+            log.debug(f"Output from stdout: {stdout}")
+            log.debug(f"Output from stderr: {stderr}")
             message_to_send = find_file_with_erorr_template(tech_spec, stdout, stderr)
             path_and_file_name = query_llm(message_to_send)
             code = read_file(path_and_file_name)
@@ -85,4 +85,4 @@ def fix_code(
 
 
 if __name__ == "__main__":
-    fire.Fire(fix_code)
+    fire.Fire(run_with_self_healing_code)

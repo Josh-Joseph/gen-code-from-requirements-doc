@@ -8,8 +8,9 @@ Write a technical specification document based on these requirements. The techni
 - Have the following sections:
     - A table of contents
     - Last updated date
-    - An overview of the project. This should contain a description of the objective of the project.
+    - The project's objectives. This should contain a description of the objective of the project.
     - Setup and usage instructions. Include the codebase's root folder ({file_path}) and make it clear all commands will be run from this location.
+    - High-level overview of the codebase. This should contain a description of the codebase's organization and how it achieves the objectives of the project. Include a step-by-step description of the how the codebase achieves the objectives of the project.
     - Code organization. A tree diagram of the codebase as it would look if we were to created by `tree -a` on a linux system. The tree diagram:
         - You must include the following: 
             - a `src` module. Make sure to include a `__init__.py` file so it can be imported by the tests.
