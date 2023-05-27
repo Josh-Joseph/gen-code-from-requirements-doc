@@ -45,6 +45,7 @@ When the codebase is run, this is stderr:
 {stderr}
 
 What file should be edited in order to fix the error?
-Only respond with the path (including the codebases's root folder) and filename.
+Only respond with the path and filename.
+The filename must include the root folder of the codebase.
 Do not include any other text or formatting.
 If there is no error, respond only with the exact string "There is no error."."""

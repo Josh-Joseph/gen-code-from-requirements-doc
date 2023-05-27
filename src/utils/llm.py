@@ -51,14 +51,44 @@ def serialize_file_contents(file_contents: str) -> str:
     return f"<file_contents>\n{file_contents}</file_contents>"
 
 
+def get_max_tokens_for_completion(error_message):
+    """Get the maximum number of tokens for completion from an error message.
+
+    In the next version, compute this before we send the message, rather than parsing it from the error.
+    
+    Note the error message looks like:
+    Exception has occurred: InvalidRequestError
+    This model's maximum context length is 8192 tokens. However, you requested 8298 tokens (6250 in the messages, 2048 in the completion). Please reduce the length of the messages or completion.
+    File "/workspaces/gen-code-from-requirements-doc/src/utils/llm.py", line 92, in query_llm
+        response = openai.ChatCompletion.create(stream=stream_response, **params)
+    File "/workspaces/gen-code-from-requirements-doc/src/run_with_self_healing.py", line 76, in run_with_self_healing_code
+        reply = query_llm(message_to_send)
+    File "/workspaces/gen-code-from-requirements-doc/src/run_with_self_healing.py", line 93, in <module>
+        fire.Fire(run_with_self_healing_code)
+    openai.error.InvalidRequestError: This model's maximum context length is 8192 tokens. However, you requested 8298 tokens (6250 in the messages, 2048 in the completion). Please reduce the length of the messages or completion."""
+    # Regex pattern to extract the numbers from the message
+    pattern = r"(\d+)"
+
+    # Extract the numbers from the error message
+    numbers = re.findall(pattern, error_message)
+
+    # Convert the extracted numbers to integers
+    numbers = [int(num) for num in numbers]
+
+    # Calculate the maximum tokens for completion
+    max_tokens_for_completion = numbers[0] - numbers[2] - 1
+
+    return max_tokens_for_completion
+
+
 def query_llm(
         message: str,
-        max_request_attempts: int = 5,
+        max_request_attempts: int = 10,
         # openai_model: str = "gpt-3.5-turbo",
         openai_model: str = "gpt-4-0314",
         stream_response: bool = False,
         tokens_per_log_msg: int = 100
-    ) -> str | None:
+) -> str | None:
     """Send the a message to OpenAI and return the reply (with retries).
     
     Args:
@@ -78,17 +108,16 @@ def query_llm(
     log.debug(f"llm query:\n{message}")
     messages = []
     messages.append({"role": "user", "content": message})
-
-    params = {
-        "model": openai_model,
-        "messages": messages,
-        "max_tokens": openai_model_max_tokens,
-        "temperature": 0
-    }
     reply = None
     attempts = 1
     while reply is None and attempts <= max_request_attempts:
         try:
+            params = {
+                "model": openai_model,
+                "messages": messages,
+                "max_tokens": openai_model_max_tokens,
+                "temperature": 0
+            }
             response = openai.ChatCompletion.create(stream=stream_response, **params)
             if stream_response:
                 total_tokens_recieved_so_far = 0
@@ -102,7 +131,7 @@ def query_llm(
                         total_tokens_recieved_so_far += len(encoding.encode(content))
                         if total_tokens_recieved_so_far - last_log_msg_token_count >= tokens_per_log_msg:
                             log.debug(f"Recieving response... (total tokens recieved so far: {total_tokens_recieved_so_far}; "
-                                    f"total elapsed time: {time.time() - request_start_time:.2f} seconds)")
+                                      f"total elapsed time: {time.time() - request_start_time:.2f} seconds)")
                             last_log_msg_token_count = total_tokens_recieved_so_far
                 reply = streamed_reply  # set this last, incase the API errors out mid-reply
             else:
@@ -113,6 +142,11 @@ def query_llm(
                         f"{response.usage['completion_tokens']}, "
                         f"{response.usage['total_tokens']})")
             log.debug(f"llm reply:\n{reply}")
+        except openai.error.InvalidRequestError as err:
+            error_message = str(err)
+            openai_model_max_tokens = get_max_tokens_for_completion(error_message)
+            log.warning(f"OpenAI API request was invalid: {err}. Reducing max tokens to {openai_model_max_tokens}.") 
+            attempts -= 1  # this attempt doesn't count
         except openai.error.APIError as err:
             log.warning(f"OpenAI API returned an API Error: {err}. This was attempt {attempts} of {max_request_attempts}.")
         except openai.error.APIConnectionError as err:
@@ -128,6 +162,7 @@ def query_llm(
         except requests.exceptions.ChunkedEncodingError as err:
             log.warning(f"OpenAI API request errored out: {err}. This was attempt {attempts} of {max_request_attempts}.")
         attempts += 1
+        time.sleep(1)
     if reply is None:
         raise ValueError(f"Failed to get a reply from OpenAI after {max_request_attempts} attempts.")
     return reply

@@ -42,29 +42,33 @@ While it's super simple, it's amazing it actually works!
 
 ![discord_bot](images/discord_bot.PNG)
 
-Something interesting that came up: I added the "Ensure that you have set `intents.message_content = True`" in the discord bot's requirements document to fix a bug that neither improve code or fix code finds so I just .. added it to the requirements but that doesn't seem like the right place for it.
-
-### GitHub Issues to PR Bot
-As a second test - a bot which monitors a github repo for issues and automatically creates a PR linked to it and closes the issue when the PR is closed.
-
-This code will actually be used in my next attempt at this (see the "Ideas for the next iteration" section).
-
-An example of something unexpected I had to manually dig into: I added the instruction to the requirements document to create a new branch before creating the PR since the bot didn't do that on its own (and without a branch created first, PR creation errors out).
-
-***************************************** TODO FINISH THIS ONCE CODE WORKS !!!! *****************************************
+Interesting thing that came up while making this work: I added the "Ensure that you have set `intents.message_content = True`" in the discord bot's requirements document to fix a bug that neither improve code or fix code finds so I just .. added it to the requirements but that doesn't seem like the right place for it.
 
 ### JAX-based Classifier for the IRIS Dataset
-As a third test - although still super simple but much more in the direction of my desired use case - using it to generate ML code. This was a fun example too to see how it manages downloading data, splitting it into train/test, defining a model, and training it.
+As a second test - although still super simple but much more in the direction of my desired use case - using it to generate ML code. This was a fun example too to see how it manages downloading data, splitting it into train/test, defining a model, and training it.
 
 ![discord_bot](images/jax_script_success.PNG)
 
 Seems good. Granted I imagine there are _many_ examples of creating classifiers using the IRIS dataset on the internet so it's not all that shocking it did well. But still _super_ cool.
 
-Something interesting that came up: The first two bots were designed to run forever so when I was first running this script it (correctly) exited when it finished but `run_with_self_healing.py` (as it was at the time) interpreted the process ending as an error occurring. When it then sent the stderr to GPT-4 (to "heal" itself), the code threw this error:
+Interesting thing that came up while making this work: The first two bots were designed to run forever so when I was first running this script it (correctly) exited when it finished but `run_with_self_healing.py` (as it was at the time) interpreted the process ending as an error occurring. When it then sent the stderr to GPT-4 (to "heal" itself), the code threw this error:
 
 ![discord_bot](images/jax_script_error.PNG)
 
 Really fun to see it look for a directory named "There is no error to fix in the codebase. The messages in stderr are warnings, not errors."
+
+### GitHub Issues to PR Bot
+As a third test - a bot which monitors a github repo for issues and automatically creates a PR linked to it and closes the issue when the PR is closed.
+
+This code is actually a first attempt at some of what I'd use next version of this (see the "Ideas for the next iteration" section).
+
+Interesting thing that came up while making this work: I added the instruction to the requirements document to create a new branch before creating the PR since the bot didn't do that on its own (and without a branch created first, PR creation errors out).
+
+Turns out after some "self healing" the bot would just hang when running the tests. While I could imagine implementing something like "if tests don't finish after X amount of time, break, and send that to GPT-4", I have mostly hit end of the effort I think is worthwhile to iron out all the bugs. I think it's more fruitful to move on to the next iteration.
+
+Just to get a feel of how close it got, I manually commented out the tests in `set_up_and_run.sh` and re-ran it. After some additional self healing
+
+***************************************** TODO FINISH THIS ONCE CODE WORKS !!!! *****************************************
 
 ## Existing problems
 - Generally passing around what folder is where is very fragile and needs some love.
@@ -86,6 +90,8 @@ Really fun to see it look for a directory named "There is no error to fix in the
 - Rather than this one-forward-pass-style, I think development may need to look a lot more like a standard software dev process (think: GitHub issues, branch the code, put in a PR, reviews, merge the PR). I think this style of iterating will be much easier for me to give GPT-4 the specificity of feedback needed to build a codebase containing, say, a dozen files. This may also help limit what needs to be in GPT-4's context and allow me to build bigger codebases without having to put full requirements and/or technical specification documents in the context.
 - Ideally in this new mode, I'd only have to write issues and review PRs. It's mostly the same mindset as interacting with a junior engineer.
 - This also may help surface to what degree tests help (since we'd see their results and the bot trying to fix them in the PR).
+- I'd also like to add the ability for the LLM to "ask" for more detail if there are particular bits of the given instructions that are unclear. Issues/PRs also seem a great place for this back and forth.
+- Allowing for the use of tools such as search.
 
 ## Related projects
 These projects were extremely inspiring and I borrowed many ideas from them:
