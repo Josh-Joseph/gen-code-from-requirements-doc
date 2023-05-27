@@ -56,7 +56,7 @@ Interesting thing that came up while making this work: The first bot was designe
 
 ![discord_bot](images/jax_script_error.PNG)
 
-Really fun to see it look for a directory named "There is no error to fix in the codebase. The messages in stderr are warnings, not errors."
+Really fun to see it look for a directory named "There is no error to fix in the codebase. The messages in stderr are warnings, not errors." It was right! There were no errors, it correctly exited.
 
 ### GitHub Issues to PR Bot
 As a third test - a bot which monitors a github repo for issues and automatically creates a PR linked to it.
