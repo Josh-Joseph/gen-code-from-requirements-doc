@@ -8,7 +8,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Run tests
-# python -m unittest discover tests
+python -m unittest discover tests
 
 # Start the bot
 python src/bot.py
