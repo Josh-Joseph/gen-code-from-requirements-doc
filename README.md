@@ -52,7 +52,7 @@ As a second test - although still super simple but much more in the direction of
 
 Seems good. Granted I imagine there are _many_ examples of creating classifiers using the IRIS dataset on the internet so it's not all that shocking it did well. But still _super_ cool.
 
-Interesting thing that came up while making this work: The first bot was designed to run forever so when I was first running this script it (correctly) exited when it finished but `run_with_self_healing.py` (as it was at the time) interpreted the process ending as an error occurring. When it then sent the stderr to GPT-4 (to "heal" itself), the code threw this error:
+Interesting thing that came up while making this work: The first bot was designed to run forever so when I was first running the script for this experiment it (correctly) exited when it finished but `run_with_self_healing.py` (as it was at the time) interpreted the process ending as an error occurring. When it then sent stderr to GPT-4 (to "heal" itself), the code threw this error:
 
 ![discord_bot](images/jax_script_error.PNG)
 
