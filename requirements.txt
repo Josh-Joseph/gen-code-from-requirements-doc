@@ -9,3 +9,5 @@ lxml
 playwright
 langchain
 fire
+joblib
+gitpython

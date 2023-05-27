@@ -1,0 +1,4 @@
+jax==0.2.25
+jaxlib==0.1.75
+numpy==1.22.3
+python-dateutil==2.8.2
