@@ -38,7 +38,9 @@ To see more detail on each experiment, check out their requirements documents in
 
 ### Local Discord Character Counter Bot
 For a first test: a discord bot that runs locally counts characters of messages sent by "subscribers" to it. See the requirements docs for usage.
+
 Requirements document: [requirements_documents/local_discord_bot.md](requirements_documents/local_discord_bot.md)
+
 GPT-4 generated code: [generated_projects/local_discord_bot](generated_projects/local_discord_bot)
 
 While it's super simple, it's amazing it actually works!
@@ -49,7 +51,9 @@ Interesting thing that came up while making this work: I added the "Ensure that 
 
 ### JAX-based Classifier for the IRIS Dataset
 For a second test: generate some ML code and train a classifier. This was a fun example to see how it manages downloading data, splitting it into train/test, defining a model, training, and it.
+
 Requirements document: [requirements_documents/jax_iris_classifier.md](requirements_documents/jax_iris_classifier.md)
+
 GPT-4 generated code: [generated_projects/jax_iris_classifier](generated_projects/jax_iris_classifier)
 
 ![discord_bot](images/jax_script_success.PNG)
@@ -64,7 +68,9 @@ Really fun to see it look for a directory named "There is no error to fix in the
 
 ### GitHub Issues to PR Bot
 For a third test: a bot which monitors a github repo for issues and automatically creates a PR linked to it.
+
 Requirements document: [requirements_documents/github_issues_to_pr_bot.md](requirements_documents/github_issues_to_pr_bot.md)
+
 GPT-4 generated code: [generated_projects/github_issues_to_pr_bot](generated_projects/github_issues_to_pr_bot)
 
 Turns out after some "self healing" the bot would just hang when running the tests. While I could imagine implementing something like "if tests don't finish after X amount of time, break, and send that to GPT-4", I have mostly hit end of the effort I think is worthwhile to iron out all these cases. I think it's more fruitful to move on to the next version of this codebase.
