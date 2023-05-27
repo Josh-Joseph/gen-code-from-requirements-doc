@@ -61,7 +61,7 @@ Really fun to see it look for a directory named "There is no error to fix in the
 ### GitHub Issues to PR Bot
 As a third test - a bot which monitors a github repo for issues and automatically creates a PR linked to it.
 
-Turns out after some "self healing" the bot would just hang when running the tests. While I could imagine implementing something like "if tests don't finish after X amount of time, break, and send that to GPT-4", I have mostly hit end of the effort I think is worthwhile to iron out all these cases. I think it's more fruitful to move on to the next iteration.
+Turns out after some "self healing" the bot would just hang when running the tests. While I could imagine implementing something like "if tests don't finish after X amount of time, break, and send that to GPT-4", I have mostly hit end of the effort I think is worthwhile to iron out all these cases. I think it's more fruitful to move on to the next version of this codebase.
 
 Just to get a feel of how close it got, I manually commented out the tests in `set_up_and_run.sh` and re-ran it but it seemed to get stuck in a loop of fixes that required fixing two files at once. Since only one file is fixed at a time, it just kept alternating over different files. Again, seems fixable but doesn't seem worth the effort to improve this approach/repo to handle this.
 
@@ -81,7 +81,7 @@ Just to get a feel of how close it got, I manually commented out the tests in `s
 - I like the mindset of viewing the LLM like it's a really book-smart intern with little real-world development experience. It has some unintuitive (to me) priors that can confusingly skew interpretations of vague instructions. When I felt the odd prior happening, it helped to just be more specific. At some point "more specific" means "examples".
 - It's unclear how much also generating/running tests helped (but could be a lot). This repo just doesn't have the structure to make this easy to understand.
 
-## Ideas for the next iteration
+## Ideas for the next version
 - Rather than this one-forward-pass-style, I think development may need to look a lot more like a standard software dev process (think: GitHub issue, branch, put in a PR, reviews, merge the PR, close the issue). I think this style of iterating will be much easier for me to give GPT-4 the specificity of feedback needed to build a codebase containing, say, a dozen+ files. This may also help limit what needs to be in GPT-4's context and allow me to build bigger codebases without having to put full requirements and/or technical specification documents in the context.
 - Ideally in this new mode I'd only have to write issues and review PRs. It's mostly the same mindset as interacting with a junior engineer.
 - This also may help surface to what degree tests help (since we'd see their results and the bot trying to fix them in the PR).
